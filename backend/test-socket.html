@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Socket Test</title>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+  <h2>Socket.io Test</h2>
+  <button onclick="joinSession()">Join Session</button>
+  <button onclick="sendQuestion()">Send Question</button>
+  <div id="log"></div>
+
+  <script>
+    const socket = io('http://localhost:5000');
+    const log = document.getElementById('log');
+
+    const addLog = (msg) => {
+      log.innerHTML += `<p>${new Date().toLocaleTimeString()} — ${msg}</p>`;
+    }
+
+    socket.on('connect', () => {
+      addLog(`✅ Connected! Socket ID: ${socket.id}`);
+    });
+
+    socket.on('user-joined', (data) => {
+      addLog(`👤 ${data.message}`);
+    });
+
+    socket.on('question-received', (question) => {
+      addLog(`❓ New question: ${JSON.stringify(question)}`);
+    });
+
+    function joinSession() {
+      socket.emit('join-session', 'ABC123');
+      addLog('Joined room ABC123');
+    }
+
+    function sendQuestion() {
+      socket.emit('new-question', {
+        sessionCode: 'ABC123',
+        question: { id: 1, question_text: 'What is recursion?', upvotes: 0 }
+      });
+      addLog('Sent a question');
+    }
+  </script>
+</body>
+</html>

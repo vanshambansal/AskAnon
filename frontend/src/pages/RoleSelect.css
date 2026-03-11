@@ -1,0 +1,28 @@
+.role-page {
+  min-height: 100vh; display: grid; place-items: center;
+  padding: 24px;
+  background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(240,180,41,0.06) 0%, transparent 70%);
+}
+.role-card {
+  width: 100%; max-width: 420px;
+  display: flex; flex-direction: column; gap: 20px;
+  text-align: center;
+}
+.role-title { font-size: 24px; font-weight: 800; }
+.role-sub   { font-size: 14px; color: var(--text3); }
+
+.role-options { display: flex; flex-direction: column; gap: 10px; text-align: left; }
+.role-option {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 16px 20px; border-radius: var(--radius);
+  background: var(--surface); border: 1px solid var(--border);
+  cursor: pointer; transition: all 0.15s; text-align: left;
+}
+.role-option:hover  { border-color: var(--border2); }
+.role-option.active { border-color: var(--accent); background: rgba(240,180,41,0.06); }
+
+.role-icon  { font-size: 24px; margin-bottom: 4px; }
+.role-label { font-size: 15px; font-weight: 700; color: var(--text); }
+.role-desc  { font-size: 12px; color: var(--text3); }
+
+.role-confirm { width: 100%; justify-content: center; padding: 14px; }
