@@ -3,7 +3,6 @@ import pool from '../config/db.js';
 
 const router = express.Router();
 
-// POST /api/users/sync — create or fetch user (no role needed)
 router.post('/sync', async (req, res) => {
   const { clerk_user_id, email, name } = req.body;
 
@@ -30,10 +29,29 @@ router.post('/sync', async (req, res) => {
   }
 });
 
-// GET /api/users/me
 router.get('/me', async (req, res) => {
-  if (!req.user) return res.status(404).json({ error: 'User not found' });
-  res.json(req.user);
-});
+  try {
+    const { clerk_user_id } = req.query
+
+    if (!clerk_user_id) {
+      return res.status(400).json({ error: 'clerk_user_id query param required' })
+    }
+
+    const result = await pool.query(
+      'SELECT * FROM users WHERE clerk_user_id = $1',
+      [clerk_user_id]
+    )
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' })
+    }
+
+    res.json(result.rows[0])
+  } catch (err) {
+    console.error('Me error:', err.message)
+    res.status(500).json({ error: 'Internal server error' })
+  }
+})
+
 
 export default router;

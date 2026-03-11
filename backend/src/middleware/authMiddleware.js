@@ -7,7 +7,7 @@ dotenv.config();
 
 const clerk = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 
-// ─── AUTH MIDDLEWARE ───────────────────────────────────────
+
 export const requireAuth = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
@@ -18,18 +18,15 @@ export const requireAuth = async (req, res, next) => {
   const token = authHeader.split(' ')[1];
 
   try {
-    // Verify token with Clerk
     const payload = await clerk.verifyToken(token);
     const clerkUserId = payload.sub;
 
-    // Find user in our DB
     const result = await pool.query(
       'SELECT * FROM users WHERE clerk_user_id = $1',
       [clerkUserId]
     );
 
     if (result.rows.length === 0) {
-      // User not in DB yet — attach clerkUserId so sync route can use it
       req.clerkUserId = clerkUserId;
       req.user = null;
       return next();
@@ -45,7 +42,7 @@ export const requireAuth = async (req, res, next) => {
   }
 };
 
-// ─── TEACHER ONLY ──────────────────────────────────────────
+
 export const requireTeacher = (req, res, next) => {
   if (!req.user || req.user.role !== 'teacher') {
     return res.status(403).json({ error: 'Only teachers can do this' });
@@ -53,7 +50,7 @@ export const requireTeacher = (req, res, next) => {
   next();
 };
 
-// ─── RATE LIMITER ──────────────────────────────────────────
+
 export const rateLimiter = async (req, res, next) => {
   const user_id = req.user?.id || req.body.user_id;
 

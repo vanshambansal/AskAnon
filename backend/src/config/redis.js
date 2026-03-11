@@ -15,7 +15,6 @@ redisClient.on('connect', () => {
   console.log('✅ Redis connected successfully!');
 });
 
-// Connect to Redis
 await redisClient.connect();
 
 export default redisClient;

@@ -1,6 +1,5 @@
 import pool from '../config/db.js';
 
-// Generate a random 6-character session code (e.g. "ABC123")
 const generateSessionCode = () => {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let code = '';
@@ -10,12 +9,9 @@ const generateSessionCode = () => {
   return code;
 };
 
-// POST /api/sessions — Teacher creates a session
 export const createSession = async (req, res) => {
   const { teacher_id, title, subject } = req.body;
 
-
-  // Basic validation
   if (!teacher_id || !title) {
     return res.status(400).json({ error: 'teacher_id and title are required' });
   }
@@ -24,7 +20,6 @@ export const createSession = async (req, res) => {
     let session_code;
     let isUnique = false;
 
-    // Keep generating codes until we get a unique one
     while (!isUnique) {
       session_code = generateSessionCode();
       const existing = await pool.query(
@@ -49,7 +44,6 @@ export const createSession = async (req, res) => {
   }
 };
 
-// GET /api/sessions/:code — Student joins with code
 export const getSessionByCode = async (req, res) => {
   const { code } = req.params;
 
@@ -77,7 +71,6 @@ export const getSessionByCode = async (req, res) => {
   }
 };
 
-// PATCH /api/sessions/:id/end — Teacher ends session
 export const endSession = async (req, res) => {
   const { id } = req.params;
 
@@ -102,7 +95,6 @@ export const endSession = async (req, res) => {
   }
 };
 
-// GET /api/sessions/teacher/:teacherId
 export const getSessionsByTeacher = async (req, res) => {
   const { teacherId } = req.params;
   try {
@@ -122,7 +114,6 @@ export const getSessionsByTeacher = async (req, res) => {
 export const deleteSession = async (req, res) => {
   const { id } = req.params;
   try {
-    // Only allow deleting ended sessions
     const check = await pool.query(
       'SELECT * FROM sessions WHERE id = $1',
       [id]

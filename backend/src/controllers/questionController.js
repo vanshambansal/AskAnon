@@ -1,6 +1,5 @@
 import pool from '../config/db.js';
 
-// POST /api/questions — Student posts a question
 export const createQuestion = async (req, res) => {
   const { session_id, question_text, category } = req.body;
 
@@ -13,7 +12,6 @@ export const createQuestion = async (req, res) => {
   }
 
   try {
-    // Check session is still active
     const session = await pool.query(
       'SELECT * FROM sessions WHERE id = $1 AND is_active = true',
       [session_id]
@@ -38,7 +36,6 @@ export const createQuestion = async (req, res) => {
   }
 };
 
-// GET /api/questions/:sessionId — Get all questions, sorted by upvotes
 export const getQuestions = async (req, res) => {
   const { sessionId } = req.params;
 
@@ -58,7 +55,6 @@ export const getQuestions = async (req, res) => {
   }
 };
 
-// PATCH /api/questions/:id/answer — Teacher marks as answered
 export const markAnswered = async (req, res) => {
   const { id } = req.params;
 
@@ -83,7 +79,6 @@ export const markAnswered = async (req, res) => {
   }
 };
 
-// DELETE /api/questions/:id — Teacher deletes a question
 export const deleteQuestion = async (req, res) => {
   const { id } = req.params;
 
@@ -105,7 +100,6 @@ export const deleteQuestion = async (req, res) => {
   }
 };
 
-// POST /api/questions/:id/upvote — Student upvotes a question
 export const upvoteQuestion = async (req, res) => {
   const { id } = req.params;
   const { user_id } = req.body;
@@ -115,7 +109,6 @@ export const upvoteQuestion = async (req, res) => {
   }
 
   try {
-    // Check if already voted
     const existing = await pool.query(
       'SELECT * FROM votes WHERE question_id = $1 AND user_id = $2',
       [id, user_id]
@@ -125,13 +118,11 @@ export const upvoteQuestion = async (req, res) => {
       return res.status(400).json({ error: 'You already upvoted this question' });
     }
 
-    // Add vote record
     await pool.query(
       'INSERT INTO votes (question_id, user_id) VALUES ($1, $2)',
       [id, user_id]
     );
 
-    // Increment upvote count on the question
     const result = await pool.query(
       `UPDATE questions
        SET upvotes = upvotes + 1
