@@ -8,10 +8,6 @@ export default function LandingPage() {
   const navigate = useNavigate()
   const heroRef = useRef(null)
 
-//   useEffect(() => {
-//     if (isSignedIn) navigate('/dashboard')
-//   }, [isSignedIn])
-
   return (
     <div className="landing">
       {/* ANIMATED GRID */}

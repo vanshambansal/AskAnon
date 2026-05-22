@@ -18,8 +18,6 @@ export default function TeacherDashboard() {
   const [role, setRole] = useState(null)
   const { getToken } = useAuth()
 
-
-  // On mount — sync user to our DB and load their sessions
   useEffect(() => {
     if (user) syncUser()
   }, [user])
@@ -27,7 +25,6 @@ export default function TeacherDashboard() {
 const syncUser = async () => {
   try {
     const token = await getToken()
-    // Just fetch current user — role already set during RoleSelect
     const res = await axios.get(`${API}/api/users/me`,
       { headers: { Authorization: `Bearer ${token}` } }
     )
@@ -65,7 +62,6 @@ const syncUser = async () => {
       setSessions(prev => [res.data, ...prev])
       setForm({ title: '', subject: '' })
       setShowForm(false)
-      // Go directly to the session room
       navigate(`/session/${res.data.session_code}`)
     } catch (err) {
       console.error('Create session error:', err)

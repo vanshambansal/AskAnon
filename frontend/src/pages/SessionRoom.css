@@ -165,3 +165,120 @@
   .room-body   { padding: 20px 14px; }
   .room-footer { padding: 12px 16px; flex-direction: column; gap: 4px; text-align: center; }
 }
+
+
+/* ── TEACHER HEADER ACTIONS ─────────────────────────── */
+.teacher-header-actions {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.share-btn { cursor: pointer; }
+
+/* ── ATTACH BUTTON (student ask box) ────────────────── */
+.ask-buttons {
+  display: flex; flex-direction: column; gap: 6px; flex-shrink: 0;
+}
+.attach-btn {
+  width: 48px !important; height: 38px !important;
+  padding: 0 !important; justify-content: center;
+  font-size: 16px !important; cursor: pointer;
+  border-radius: var(--radius) !important;
+}
+
+/* ── IMAGE PREVIEW (before posting) ─────────────────── */
+.image-preview {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; border-radius: var(--radius);
+  background: var(--surface); border: 1px solid var(--border);
+}
+.preview-thumb {
+  width: 60px; height: 60px; object-fit: cover;
+  border-radius: 6px; flex-shrink: 0;
+}
+.preview-info {
+  display: flex; flex-direction: column; gap: 6px; flex: 1;
+}
+.preview-name {
+  font-size: 12px; color: var(--text3);
+  font-family: 'DM Mono', monospace;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ── QUESTION IMAGE (attached to a question card) ───── */
+.question-image {
+  max-width: 100%; max-height: 200px; object-fit: contain;
+  border-radius: 8px; margin: 8px 0;
+  border: 1px solid var(--border); cursor: zoom-in;
+  display: block;
+}
+
+/* ── SHARED MEDIA STRIP (teacher shared images) ──────── */
+.media-strip {
+  display: flex; flex-direction: column; gap: 14px;
+}
+.media-strip-header {
+  display: flex; align-items: center;
+  justify-content: space-between;
+}
+.media-strip-header h3 { font-size: 14px; font-weight: 700; }
+
+.media-grid {
+  display: flex; flex-wrap: wrap; gap: 12px;
+}
+.media-item {
+  position: relative; display: flex;
+  flex-direction: column; gap: 6px;
+  max-width: 180px;
+}
+.media-thumb {
+  width: 180px; height: 130px; object-fit: cover;
+  border-radius: 8px; border: 1px solid var(--border);
+  cursor: zoom-in; transition: border-color 0.15s;
+  display: block;
+}
+.media-thumb:hover { border-color: var(--accent); }
+.media-caption {
+  font-size: 11px; color: var(--text3);
+  font-family: 'DM Mono', monospace;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.media-delete-btn {
+  position: absolute; top: 6px; right: 6px;
+  background: rgba(0,0,0,0.6); color: #fff;
+  border: none; border-radius: 50%;
+  width: 22px; height: 22px;
+  font-size: 11px; cursor: pointer;
+  display: grid; place-items: center;
+  transition: background 0.15s;
+}
+.media-delete-btn:hover { background: var(--red); }
+
+/* ── LIGHTBOX ────────────────────────────────────────── */
+.lightbox {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(0,0,0,0.88);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 16px; cursor: pointer;
+  padding: 24px;
+}
+.lightbox-img {
+  max-width: 90vw; max-height: 80vh;
+  object-fit: contain; border-radius: 10px;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+}
+.lightbox-close {
+  position: absolute; top: 20px; right: 24px;
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text); border-radius: 50%;
+  width: 36px; height: 36px; font-size: 16px;
+  cursor: pointer; display: grid; place-items: center;
+  z-index: 101;
+}
+.lightbox-hint { font-size: 12px; color: rgba(255,255,255,0.4); }
+
+/* ── RESPONSIVE ──────────────────────────────────────── */
+@media (max-width: 600px) {
+  .media-thumb { width: 140px; height: 100px; }
+  .media-item  { max-width: 140px; }
+  .teacher-header-actions { gap: 6px; }
+}
