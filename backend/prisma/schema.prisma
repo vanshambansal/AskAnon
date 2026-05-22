@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  clerk_user_id String   @unique
+  email         String   @unique
+  name          String?
+  role          String   @default("student")
+  created_at    DateTime @default(now())
+
+  sessions Session[]
+  votes    Vote[]
+
+  @@map("users")
+}
+
+model Session {
+  id           Int       @id @default(autoincrement())
+  teacher_id   Int
+  session_code String    @unique
+  title        String
+  subject      String?
+  is_active    Boolean   @default(true)
+  started_at   DateTime  @default(now())
+  ended_at     DateTime?
+
+  teacher   User           @relation(fields: [teacher_id], references: [id])
+  questions Question[]
+  media     SessionMedia[]
+
+  @@map("sessions")
+}
+
+model Question {
+  id            Int      @id @default(autoincrement())
+  session_id    Int
+  question_text String
+  upvotes       Int      @default(0)
+  is_answered   Boolean  @default(false)
+  category      String?
+  image_url     String?
+  created_at    DateTime @default(now())
+
+  session Session @relation(fields: [session_id], references: [id])
+  votes   Vote[]
+
+  @@map("questions")
+}
+
+model Vote {
+  id          Int      @id @default(autoincrement())
+  question_id Int
+  user_id     Int
+  created_at  DateTime @default(now())
+
+  question Question @relation(fields: [question_id], references: [id])
+  user     User     @relation(fields: [user_id], references: [id])
+
+  @@unique([question_id, user_id])
+  @@map("votes")
+}
+
+model SessionMedia {
+  id          Int      @id @default(autoincrement())
+  session_id  Int
+  image_url   String
+  public_id   String
+  caption     String?
+  uploaded_at DateTime @default(now())
+
+  session Session @relation(fields: [session_id], references: [id])
+
+  @@map("session_media")
+}

@@ -40,6 +40,15 @@ export const initSocket = (io) => {
     socket.on('disconnect', () => {
       console.log(`User disconnected: ${socket.id}`);
     });
+    socket.on('media-shared', (data) => {
+    // data = { sessionCode, media }
+    // Broadcast to everyone in session
+    io.to(data.sessionCode).emit('media-received', data.media);
+    });
+    socket.on('media-deleted', (data) => {
+    // data = { sessionCode, publicId }
+    io.to(data.sessionCode).emit('media-removed', data.publicId);
+    });
   });
 
 };

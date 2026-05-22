@@ -1,14 +1,10 @@
 import pool from '../config/db.js';
 
 export const createQuestion = async (req, res) => {
-  const { session_id, question_text, category } = req.body;
+  const { session_id, question_text, category, user_id, image_url } = req.body; // ← add image_url
 
   if (!session_id || !question_text) {
     return res.status(400).json({ error: 'session_id and question_text are required' });
-  }
-
-  if (question_text.trim().length < 5) {
-    return res.status(400).json({ error: 'Question is too short' });
   }
 
   try {
@@ -22,10 +18,10 @@ export const createQuestion = async (req, res) => {
     }
 
     const result = await pool.query(
-      `INSERT INTO questions (session_id, question_text, category)
-       VALUES ($1, $2, $3)
+      `INSERT INTO questions (session_id, question_text, category, image_url)
+       VALUES ($1, $2, $3, $4)
        RETURNING *`,
-      [session_id, question_text.trim(), category || null]
+      [session_id, question_text.trim(), category || null, image_url || null] // ← add
     );
 
     res.status(201).json(result.rows[0]);

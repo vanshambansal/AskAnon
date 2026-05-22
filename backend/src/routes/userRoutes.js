@@ -29,24 +29,25 @@ router.post('/sync', async (req, res) => {
   }
 });
 
+
 router.get('/me', async (req, res) => {
   try {
-    const { clerk_user_id } = req.query
-
-    if (!clerk_user_id) {
-      return res.status(400).json({ error: 'clerk_user_id query param required' })
+    // If query param provided (Postman testing)
+    if (req.query.clerk_user_id) {
+      const result = await pool.query(
+        'SELECT * FROM users WHERE clerk_user_id = $1',
+        [req.query.clerk_user_id]
+      )
+      if (result.rows.length === 0) {
+        return res.status(404).json({ error: 'User not found' })
+      }
+      return res.json(result.rows[0])
     }
 
-    const result = await pool.query(
-      'SELECT * FROM users WHERE clerk_user_id = $1',
-      [clerk_user_id]
-    )
+    // Normal frontend call uses req.user from auth middleware
+    if (!req.user) return res.status(404).json({ error: 'User not found' })
+    res.json(req.user)
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'User not found' })
-    }
-
-    res.json(result.rows[0])
   } catch (err) {
     console.error('Me error:', err.message)
     res.status(500).json({ error: 'Internal server error' })
