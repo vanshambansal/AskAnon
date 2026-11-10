@@ -1,97 +1,57 @@
-import pool from '../config/db.js';
-import cloudinary from '../config/cloudinary.js';
+import prisma from '../config/prisma.js';
+import { classroomTransaction } from '../utils/transaction.js';
+import { assertOwner, positiveId, fail } from '../middleware/accessMiddleware.js';
+import { imageReceipt, queueAsset, retryAssetCleanup } from '../utils/storageLifecycle.js';
+import { invalidateSession, roomEvent } from '../utils/classroomEvents.js';
 
-// POST /api/upload/question
-// Student attaches image to their question
-export const uploadQuestionImage = async (req, res) => {
+export const uploadQuestionImage = async (req, res, next) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded' });
-    }
-
-    // req.file is populated by multer after upload to Cloudinary
+    if (!req.file) fail(400, 'Select an image');
     const { path: image_url, filename: public_id } = req.file;
-
-    res.status(201).json({
-      image_url,
-      public_id,
-      message: 'Image uploaded successfully'
+    await queueAsset({ public_id }, 24 * 60 * 60 * 1000);
+    res.status(201).json({ image_url, public_id, image_receipt: imageReceipt(req.user.id, image_url, public_id) });
+  } catch (err) { next(err); }
+};
+export const uploadSessionMedia = async (req, res, next) => {
+  let saved = false;
+  try {
+    if (!req.file) fail(400, 'Select an image');
+    const { media, session } = await classroomTransaction(async tx => {
+      const session = await tx.session.findUnique({ where: { id: positiveId(req.params.sessionId) } });
+      if (!session?.is_active || session.deletion_job_id) fail(409, 'This lecture has ended');
+      assertOwner(req.user, session.teacher_id);
+      if (session.deletion_job_id) fail(410, 'This lecture is queued for deletion');
+      const media = await tx.sessionMedia.create({ data: { session_id: session.id, image_url: req.file.path, public_id: req.file.filename, caption: req.body.caption?.trim() || null } });
+      return { media, session };
     });
-
+    saved = true;
+    await invalidateSession(session);
+    roomEvent(req.app.get('io'), session, 'media-received', media);
+    res.status(201).json(media);
   } catch (err) {
-    console.error('Upload question image error:', err.message);
-    res.status(500).json({ error: 'Upload failed' });
+    if (!saved && req.file?.filename) { await queueAsset({ public_id: req.file.filename }); retryAssetCleanup().catch(() => {}); }
+    next(err);
   }
 };
-
-// POST /api/upload/session/:sessionId/media
-// Teacher shares image/diagram in session
-export const uploadSessionMedia = async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded' });
-    }
-
-    const { sessionId } = req.params;
-    const { caption } = req.body;
-    const { path: image_url, filename: public_id } = req.file;
-
-    // Save to session_media table
-    const result = await pool.query(
-      `INSERT INTO session_media (session_id, image_url, public_id, caption)
-       VALUES ($1, $2, $3, $4)
-       RETURNING *`,
-      [sessionId, image_url, public_id, caption || null]
-    );
-
-    res.status(201).json(result.rows[0]);
-
-  } catch (err) {
-    console.error('Upload session media error:', err.message);
-    res.status(500).json({ error: 'Upload failed' });
-  }
+export const getSessionMedia = async (req, res, next) => {
+  try { res.json(await prisma.sessionMedia.findMany({ where: { session_id: positiveId(req.params.sessionId) }, orderBy: { uploaded_at: 'asc' } })); }
+  catch (err) { next(err); }
 };
-
-// GET /api/upload/session/:sessionId/media
-// Get all media shared in a session
-export const getSessionMedia = async (req, res) => {
+export const deleteMedia = async (req, res, next) => {
   try {
-    const { sessionId } = req.params;
-
-    const result = await pool.query(
-      `SELECT * FROM session_media
-       WHERE session_id = $1
-       ORDER BY uploaded_at ASC`,
-      [sessionId]
-    );
-
-    res.json(result.rows);
-
-  } catch (err) {
-    console.error('Get session media error:', err.message);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
-
-// DELETE /api/upload/media/:publicId
-// Delete a specific media (teacher removes shared image)
-export const deleteMedia = async (req, res) => {
-  try {
-    const { publicId } = req.params;
-
-    // Delete from Cloudinary
-    await cloudinary.uploader.destroy(publicId);
-
-    // Delete from DB
-    await pool.query(
-      'DELETE FROM session_media WHERE public_id = $1',
-      [publicId]
-    );
-
-    res.json({ message: 'Media deleted' });
-
-  } catch (err) {
-    console.error('Delete media error:', err.message);
-    res.status(500).json({ error: 'Delete failed' });
-  }
+    const { media, session } = await classroomTransaction(async tx => {
+      const media = await tx.sessionMedia.findFirst({ where: { public_id: req.params.publicId } });
+      if (!media) fail(404, 'Image not found');
+      const session = await tx.session.findUnique({ where: { id: media.session_id } });
+      assertOwner(req.user, session.teacher_id);
+      if (session.deletion_job_id) fail(410, 'This lecture is queued for deletion');
+      await tx.sessionMedia.delete({ where: { id: media.id } });
+      await queueAsset(media, 0, tx);
+      return { media, session };
+    });
+    await invalidateSession(session);
+    roomEvent(req.app.get('io'), session, 'media-removed', media.public_id);
+    retryAssetCleanup().catch(() => {});
+    res.json({ message: 'Image removed from the gallery; saved vault copies retained' });
+  } catch (err) { next(err); }
 };

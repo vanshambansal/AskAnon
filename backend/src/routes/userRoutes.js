@@ -1,58 +1,33 @@
 import express from 'express';
-import pool from '../config/db.js';
-
+import prisma from '../config/prisma.js';
+import { clerk, requireIdentity, requireAuth, updateUserCache } from '../middleware/authMiddleware.js';
+import { fail } from '../middleware/accessMiddleware.js';
 const router = express.Router();
+const profile = user => ({ ...user, can_switch_role: false });
 
-router.post('/sync', async (req, res) => {
-  const { clerk_user_id, email, name } = req.body;
-
-  if (!clerk_user_id || !email) {
-    return res.status(400).json({ error: 'clerk_user_id and email are required' });
-  }
-
+router.post('/sync', requireIdentity, async (req, res, next) => {
   try {
-    const existing = await pool.query(
-      'SELECT * FROM users WHERE clerk_user_id = $1',
-      [clerk_user_id]
-    );
-    if (existing.rows.length > 0) return res.json(existing.rows[0]);
-
-    const result = await pool.query(
-      `INSERT INTO users (clerk_user_id, email, name, role)
-       VALUES ($1, $2, $3, 'student') RETURNING *`,
-      [clerk_user_id, email, name]
-    );
-    res.status(201).json(result.rows[0]);
-  } catch (err) {
-    console.error('User sync error:', err.message);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-
-router.get('/me', async (req, res) => {
-  try {
-    // If query param provided (Postman testing)
-    if (req.query.clerk_user_id) {
-      const result = await pool.query(
-        'SELECT * FROM users WHERE clerk_user_id = $1',
-        [req.query.clerk_user_id]
-      )
-      if (result.rows.length === 0) {
-        return res.status(404).json({ error: 'User not found' })
-      }
-      return res.json(result.rows[0])
+    const requestedRole = req.body?.role;
+    if (requestedRole && !['teacher', 'student'].includes(requestedRole)) fail(400, 'Choose Student or Teacher');
+    if (req.user && requestedRole && requestedRole !== req.user.role) return res.status(403).json({ error: 'Your role was chosen at registration and cannot be changed here.', code: 'ROLE_IMMUTABLE' });
+    if (!req.user && !requestedRole) return res.status(409).json({ error: 'Choose Student or Teacher to finish registration.', code: 'ROLE_REQUIRED' });
+    // Identity and email come from Clerk, never from caller-supplied profile IDs.
+    let details = req.user;
+    if (!details) {
+      const account = await clerk.users.getUser(req.clerkUserId);
+      const email = account.emailAddresses.find(e => e.id === account.primaryEmailAddressId);
+      if (!email || email.verification?.status !== 'verified') fail(403, 'Verify your primary email before continuing');
+      details = { email: email.emailAddress, name: [account.firstName, account.lastName].filter(Boolean).join(' ') || account.username || null };
     }
-
-    // Normal frontend call uses req.user from auth middleware
-    if (!req.user) return res.status(404).json({ error: 'User not found' })
-    res.json(req.user)
-
-  } catch (err) {
-    console.error('Me error:', err.message)
-    res.status(500).json({ error: 'Internal server error' })
-  }
-})
-
-
+    const role = req.user?.role || requestedRole;
+    const user = await prisma.user.upsert({
+      where: { clerk_user_id: req.clerkUserId },
+      update: {},
+      create: { clerk_user_id: req.clerkUserId, email: details.email, name: details.name, role }
+    });
+    updateUserCache(user);
+    res.json(profile(user));
+  } catch (err) { next(err); }
+});
+router.get('/me', requireAuth, (req, res) => res.json(profile(req.user)));
 export default router;
