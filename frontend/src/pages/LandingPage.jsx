@@ -1,7 +1,7 @@
 import Icon from '../components/common/Icon'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { SignInButton, useAuth } from '@clerk/clerk-react'
+import { SignInButton, useAuth, useClerk } from '@clerk/clerk-react'
 import './LandingPage.css'
 
 const sectionLinks = [
@@ -31,6 +31,7 @@ const capabilities = [
 
 export default function LandingPage() {
   const { isSignedIn, isLoaded } = useAuth()
+  const { openSignIn } = useClerk()
   const navigate = useNavigate()
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -171,7 +172,7 @@ export default function LandingPage() {
                 <SignInButton mode="modal">
                   <button disabled={!isLoaded} className="btn btn-ghost btn-sm">Sign In</button>
                 </SignInButton>
-                <button className="btn btn-primary btn-sm" onClick={() => navigate(isSignedIn ? '/dashboard' : '/onboarding')}>
+                <button className="btn btn-primary btn-sm" disabled={!isLoaded} onClick={() => isSignedIn ? navigate('/dashboard') : openSignIn()}>
                   Get Started →
                 </button>
               </div>
@@ -203,7 +204,7 @@ export default function LandingPage() {
                 <SignInButton mode="modal">
                   <button className="btn btn-ghost btn-lg w-100">Sign In</button>
                 </SignInButton>
-                <button className="btn btn-primary btn-lg w-100" style={{marginTop: '12px'}} onClick={() => navigate(isSignedIn ? '/dashboard' : '/onboarding')}>
+                <button className="btn btn-primary btn-lg w-100" style={{marginTop: '12px'}} disabled={!isLoaded} onClick={() => isSignedIn ? navigate('/dashboard') : openSignIn()}>
                   Get Started →
                 </button>
               </>
@@ -234,7 +235,7 @@ export default function LandingPage() {
                 </button>
               ) : (
                 <>
-                  <button className="btn btn-primary btn-lg" onClick={() => navigate(isSignedIn ? '/dashboard' : '/onboarding')}>
+                  <button className="btn btn-primary btn-lg" disabled={!isLoaded} onClick={() => isSignedIn ? navigate('/dashboard') : openSignIn()}>
                     Get Started →
                   </button>
                   <a href="#demo" className="btn btn-ghost btn-lg">
@@ -400,7 +401,7 @@ export default function LandingPage() {
               Create a room. Share the code. Answer the questions that matter most.
             </p>
             <div className="faculty-cta-group">
-              <button className="btn btn-primary btn-lg" onClick={() => navigate(isSignedIn ? '/dashboard' : '/onboarding')}>
+              <button className="btn btn-primary btn-lg" disabled={!isLoaded} onClick={() => isSignedIn ? navigate('/dashboard') : openSignIn()}>
                 Launch a Faculty Session →
               </button>
             </div>
@@ -441,7 +442,7 @@ export default function LandingPage() {
         <div className="footer-quote-banner">
           <p className="footer-quote">{tagline}</p>
           <div className="footer-cta-row">
-            <button className="btn btn-primary btn-lg" onClick={() => navigate(isSignedIn ? '/dashboard' : '/onboarding')}>
+            <button className="btn btn-primary btn-lg" disabled={!isLoaded} onClick={() => isSignedIn ? navigate('/dashboard') : openSignIn()}>
               Open AskAnon →
             </button>
           </div>

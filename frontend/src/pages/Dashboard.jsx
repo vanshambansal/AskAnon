@@ -229,7 +229,7 @@ export default function Dashboard() {
     setInitError(null)
     try {
       const token = await getToken()
-      const intendedRole = localStorage.getItem('intended_role')
+      localStorage.removeItem('intended_role')
 
       const cachedUserStr = sessionStorage.getItem('db_user')
       let cachedUser = null
@@ -244,11 +244,8 @@ export default function Dashboard() {
         email: user.emailAddresses?.[0]?.emailAddress,
         name: user.fullName || user.firstName
       }
-      if (intendedRole) {
-        syncPayload.role = intendedRole
-      }
 
-      if (isCacheValid && !intendedRole) {
+      if (isCacheValid) {
         // Fast path: load dashboard data immediately using cached credentials
         setDbUser(cachedUser)
         const dataPromise = fetchRoleData(cachedUser.id, cachedUser.role, token)
@@ -279,9 +276,6 @@ export default function Dashboard() {
           { headers: { Authorization: `Bearer ${token}` } }
         )
 
-        if (intendedRole) {
-          localStorage.removeItem('intended_role')
-        }
 
         const freshUser = syncRes.data
         setDbUser(freshUser)

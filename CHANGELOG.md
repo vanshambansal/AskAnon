@@ -322,3 +322,9 @@ This file is maintained as a persistent, authoritative log of all architectural 
 - Diagnosed role-selection failures as a unique-email collision with a deleted legacy Clerk identity (P2002), rather than a missing role selection.
 - Profile sync now reconnects the verified primary email only after Clerk confirms the previous identity is deleted (404). Saved role, profile ID and all owned/enrolled data are retained. Active identities and provider failures never permit reassignment.
 - Added regression coverage for deleted identity, active identity and provider outage; all 20 access tests pass.
+
+## 2026-11-10 — Authentication-first entry flow
+
+- Both landing-page entry actions authenticate first. New users choose a role only after authentication; returning users retain their saved role.
+- Direct unsigned onboarding shows a sign-in/create-account action instead of role cards. Removed stale pre-auth role intent from dashboard synchronization.
+- Added Vercel client-route fallback and a manual Vercel/Railway deployment walkthrough. No hosting resources were created.
