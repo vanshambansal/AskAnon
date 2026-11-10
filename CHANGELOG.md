@@ -260,12 +260,12 @@ This file is maintained as a persistent, authoritative log of all architectural 
     - Backend now emits `session-deleted` and `sessions-batch-deleted` broadcasts.
     - `Dashboard.jsx` now connects to Socket.io and listens for `session-deleted`, `sessions-batch-deleted`, and `session-ended` in real-time. Deleted sessions instantly disappear from both faculty and student dashboard feeds across all open windows and devices without requiring page refresh.
     - Students currently inside an active lecture that gets deleted receive the `session-closed` socket event and are cleanly redirected to `/dashboard` with an informative error toast.
-## 7 November 2026 � responsive operations
+## 7 November 2026 — responsive operations
 
 - Added consistent loading/saving feedback, skeleton views, long-wait messaging, bounded waits and duplicate-action guards across the classroom/dashboard/vault flows. Failed create/poll/upload drafts are preserved.
 - Added account-scoped frontend snapshots, request coalescing, lazy student notebook/history requests and progressive list rendering. Kept authoritative socket refreshes and invalidation.
 - Lecture deletion now returns 202 after durable enqueue, denies further classroom access, and performs topological cleanup in the backend worker. Added pending/failure/retry UI, lease recovery and batched storage-cleanup bookkeeping. Completion socket event shapes remain unchanged.
-- Additive database artifact: `backend/prisma/migrations/20261107_session_deletion_jobs/migration.sql`; regenerated bootstrap now contains 15 tables. Existing data/region/migration history retained. See the completion log for exact tests, latency samples and limitations.
+- Additive database artifact: `backend/prisma/migrations/20261107_session_deletion_jobs/migration.sql`; regenerated bootstrap now contains 15 tables. Existing data/region/migration history retained. See the completion log for exact tests, latency samples and limitations.
 
 ## 2026-11-07 - focused feedback, responsive polish and scanned-PDF retrieval
 
@@ -273,7 +273,7 @@ This file is maintained as a persistent, authoritative log of all architectural 
 - Removed instructor Review tab; text rejected by moderation is not published, unavailable checking is retryable, and ordinary rejected drafts can retry without erasing abuse penalties.
 - Added bounded, page-preserving Gemini transcription for scanned PDF pages before chunking/embedding; cached successful transcription and retained old indexes on failure. Verified existing scanned certificate through a real cited AI response.
 - Reworked hosted sessions into a clean responsive list, fixed narrow-screen grids/forms/navigation and standardized font choices. Updated landing copy, spacing, anchor alignment and auth-independent static rendering; made role selection keyboard-operable.
-- Validation: 41 backend tests + 3 frontend tests, lint/build, 13 isolated classroom integration scenarios and targeted signed-in/responsive browser checks. See completion log for evidence and limits.
+- Validation: 41 backend tests + 3 frontend tests, lint/build, 13 isolated classroom integration scenarios and targeted signed-in/responsive browser checks. See completion log for evidence and limits.
 
 ## 2026-11-07 - shorter landing and verifiable vault answers
 
@@ -281,14 +281,14 @@ This file is maintained as a persistent, authoritative log of all architectural 
 - Replaced Study task with Ask your PDFs; added readable source cards, exact retrieved passages, retry feedback and guarded/cancellable requests.
 - Diagnosed Gemini 503 overload and verified one bounded lightweight fallback. Applied the same recovery to scanned-page transcription; quota failures remain explicit.
 - Reindexed the two screenshot PDFs with page references. Added a read-only pgvector inspector and ASKANON_AI_ARCHITECTURE.md with the actual RAG flowchart and limitations.
-- Verified 46 automated tests, syntax, lint/build, real single/course PDF requests, failure recovery and responsive layouts. Existing personal data and unrelated changes retained.
+- Verified 46 automated tests, syntax, lint/build, real single/course PDF requests, failure recovery and responsive layouts. Existing personal data and unrelated changes retained.
 
 ## 2026-11-07 - conversational course companion and editorial restoration
 
 - Restored serif/italic landing headings, photo overlay, workflow strip and comparison cards while preserving working section navigation and branding.
 - Added bounded conversation context, evidence-grounded follow-up suggestions, adaptive longer answers and practice questions with revealable worked answers.
 - Expanded retrieval with authorized neighboring chunks; preserved sources, failure recovery, access control and cache versioning.
-- Added responsive Markdown tables. Verified real detailed/simpler/practice requests and draft preservation; 50 automated tests plus lint/build passed.
+- Added responsive Markdown tables. Verified real detailed/simpler/practice requests and draft preservation; 50 automated tests plus lint/build passed.
 
 ## 2026-11-10 - detailed UI and release review
 
@@ -297,14 +297,14 @@ This file is maintained as a persistent, authoritative log of all architectural 
 - Made the image viewer independently styled, body-portaled and responsive with scrollable zoom and load retry.
 - Explained standalone-to-general vault behavior and reused legacy general vault codes without deleting existing data.
 - Hide unavailable role switching; documented production blockers and audit coverage in ASKANON_PRODUCTION_REVIEW.md.
-- Validation: 52 automated tests plus 13 isolated database/socket scenarios; targeted responsive component browser checks. Authenticated manual browser audit still requires sign-in.
+- Validation: 52 automated tests plus 13 isolated database/socket scenarios; targeted responsive component browser checks. Authenticated manual browser audit still requires sign-in.
 
 ## 2026-11-10 - final credit and role-switch removal
 
 - Footer now reads Crafted by Vansham Bansal; only the name links to the GitHub profile, with no separate GitHub text/icon.
 - Removed the visible dashboard role toggle and client handler; existing production API role restrictions remain.
 - Recorded current failure handling, remaining recovery/backup/quota gaps and ordered production hardening passes in the production review. No hosting/billing/backup configuration changed.
-- Verified public and signed-in rendering, frontend lint and production build.
+- Verified public and signed-in rendering, frontend lint and production build.
 
 ## 2026-11-10 — Simplified demo release preparation
 
@@ -315,29 +315,29 @@ This file is maintained as a persistent, authoritative log of all architectural 
 - Organized current guides under docs/ and retained prior reviews under docs/history/. Real environment files are ignored, unchanged and copied to ignored local safety storage.
 - Validation: 56 unit tests, frontend lint/build and backend syntax checks passed. All 14 isolated classroom integration scenarios passed across six identities, including restart recovery; disposable records were cleaned up. Gemini responses in the integration harness are simulated, not proof of current provider quota.
 - Integration measurements still showed approximately 0.7–3.5 seconds for session creation and 2.6 seconds for queued deletion acknowledgement against the configured remote database. Background work and optimistic UI do not eliminate remote database latency.
-- Prepared five organized Git commits covering configuration, API, frontend, checks/tooling and documentation. Actual hosting configuration, production credentials/origins, backup restore and post-deployment rehearsal remain external steps.
+- Prepared five organized Git commits covering configuration, API, frontend, checks/tooling and documentation. Actual hosting configuration, production credentials/origins, backup restore and post-deployment rehearsal remain external steps.
 
 ## 2026-11-10 — Returning-account onboarding recovery
 
 - Diagnosed role-selection failures as a unique-email collision with a deleted legacy Clerk identity (P2002), rather than a missing role selection.
 - Profile sync now reconnects the verified primary email only after Clerk confirms the previous identity is deleted (404). Saved role, profile ID and all owned/enrolled data are retained. Active identities and provider failures never permit reassignment.
-- Added regression coverage for deleted identity, active identity and provider outage; all 20 access tests pass.
+- Added regression coverage for deleted identity, active identity and provider outage; all 20 access tests pass.
 
 ## 2026-11-10 — Authentication-first entry flow
 
 - Both landing-page entry actions authenticate first. New users choose a role only after authentication; returning users retain their saved role.
 - Direct unsigned onboarding shows a sign-in/create-account action instead of role cards. Removed stale pre-auth role intent from dashboard synchronization.
-- Added Vercel client-route fallback and a manual Vercel/Railway deployment walkthrough. No hosting resources were created.
+- Added Vercel client-route fallback and a manual Vercel/Railway deployment walkthrough. No hosting resources were created.
 
 ## 2026-11-10 — Landing entry-point cleanup
 
 - Kept Sign In/Dashboard in desktop and mobile navigation, the main hero action and one final footer action.
 - Removed duplicate navigation Get Started buttons and the misleading Launch a Faculty Session action. Faculty information remains; registration uses one authentication-first flow with an explicit role choice for new accounts.
-- Frontend lint and production build passed.
+- Frontend lint and production build passed.
 
 ## 2026-11-10 — Hosted moderation overload recovery
 
 - Public frontend and backend returned HTTP 200; backend health reported API/database/Redis ready and allowed the exact Vercel origin.
 - A synthetic request to the configured primary Gemini model returned HTTP 503 UNAVAILABLE; the fallback model gemini-3.5-flash-lite returned HTTP 200 with complete output using the existing key.
-- Added one bounded moderation fallback on temporary provider 5xx responses, with a ten-second total deadline. Quota errors are not retried and unavailable checks still cannot publish unchecked questions. Provider failures log only error codes, not submissions or keys.
-- Optional GEMINI_MODERATION_FALLBACK_MODEL defaults to gemini-3.5-flash-lite. No second provider or API key is required. All 16 AI regression tests passed.
+- Added one bounded moderation fallback on temporary provider 5xx responses or primary timeout, with a four-second primary attempt and ten-second total deadline. Quota errors are not retried and unavailable checks still cannot publish unchecked questions. Provider failures log only error codes, not submissions or keys.
+- Optional GEMINI_MODERATION_FALLBACK_MODEL defaults to gemini-3.5-flash-lite. No second provider or API key is required. All 17 AI regression tests passed. Live fallback checks accepted an academic CPU question and rejected an unrelated sports question.
