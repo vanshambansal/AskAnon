@@ -1,0 +1,63 @@
+.vault-assistant { border: 1px solid var(--border-strong); border-radius: 12px; background: var(--bg-card); padding: 28px; margin-bottom: 28px; scroll-margin-top: 90px; }
+.vault-assistant-heading { display: flex; justify-content: space-between; gap: 24px; align-items: flex-start; margin-bottom: 24px; }
+.vault-eyebrow { display: inline-flex; align-items: center; gap: 8px; color: var(--brand-crimson); font: 600 .7rem var(--font-mono); letter-spacing: .06em; }
+.vault-assistant-heading h2 { font: 600 1.65rem var(--font-sans); letter-spacing: -.035em; margin: 12px 0 8px; }
+.vault-assistant-heading p { font-size: .9375rem; line-height: 1.6; color: var(--text-secondary); }
+.vault-ready-count { font-size: .75rem; color: var(--text-secondary); white-space: nowrap; padding: 7px 10px; background: var(--bg-elevated); border-radius: 6px; }
+.vault-scope { display: grid; grid-template-columns: auto minmax(0,1fr); align-items: center; gap: 14px; max-width: 650px; font-size: .875rem; color: var(--text-secondary); margin-bottom: 16px; }
+.vault-scope select { min-width: 0; font-size: .875rem; }
+.vault-composer { border: 1px solid var(--border-strong); border-radius: 8px; background: var(--bg-page); overflow: hidden; }
+.vault-composer:focus-within { border-color: var(--brand-crimson); }
+.vault-composer textarea { display: block; width: 100%; min-height: 96px; resize: vertical; padding: 16px; border: none; outline: none; font: 400 1rem/1.6 var(--font-sans); color: var(--text-primary); background: transparent; }
+.vault-composer textarea::placeholder { color: var(--text-muted); }
+.vault-composer-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 12px 12px 16px; }
+.vault-composer-footer > span { color: var(--text-muted); font-size: .75rem; }
+.vault-prompts { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 14px; font-size: .75rem; color: var(--text-muted); }
+.vault-prompts button { font: inherit; color: var(--text-secondary); background: transparent; border: 1px solid var(--border-subtle); border-radius: 6px; padding: 7px 10px; cursor: pointer; }
+.vault-prompts button:hover { border-color: var(--brand-crimson); color: var(--text-primary); }
+.vault-notice { font-size: .8125rem; color: var(--text-secondary); line-height: 1.6; margin-top: 14px; }
+.vault-result { border-top: 1px solid var(--border-subtle); margin-top: 24px; padding-top: 20px; overflow-wrap: anywhere; }
+.vault-result-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.vault-result-heading h3 { font: 600 1rem var(--font-sans); }
+.vault-asked-question { color: var(--text-secondary); font-size: .875rem; margin-bottom: 16px; }
+.vault-result .ai-answer { font-size: .9375rem; line-height: 1.75; }
+.vault-source-list { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,240px),1fr)); gap: 10px; margin-top: 20px; }
+.vault-source { display: flex; gap: 10px; align-items: flex-start; padding: 12px; border: 1px solid var(--border-subtle); border-radius: 8px; color: var(--text-primary); text-decoration: none; font-size: .8125rem; }
+.vault-source:hover { border-color: var(--brand-crimson); }
+.vault-source .app-icon { flex-shrink: 0; margin-top: 2px; }
+.vault-source strong { font-weight: 500; }
+.vault-source small { display: block; color: var(--text-secondary); margin-top: 6px; }
+.vault-evidence { margin-top: 18px; font-size: .8125rem; color: var(--text-secondary); }
+.vault-evidence summary { cursor: pointer; padding: 10px 0; color: var(--text-primary); }
+.vault-evidence article { margin-top: 16px; }
+.vault-evidence blockquote { margin-top: 8px; padding-left: 14px; border-left: 2px solid var(--border-strong); line-height: 1.7; white-space: pre-wrap; }
+.vault-retry { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 12px; font-size: .8125rem; color: var(--text-secondary); }
+.material-index-status { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.material-index-status p { flex-basis: 100%; }
+@media(max-width:600px) {
+ .vault-assistant { padding: 20px 16px; }
+ .vault-assistant-heading { flex-direction: column; gap: 12px; }
+ .vault-scope { grid-template-columns: 1fr; gap: 6px; }
+ .vault-composer-footer { flex-direction: column; align-items: stretch; gap: 12px; }
+ .vault-composer-footer .btn { justify-content: center; }
+ .vault-composer textarea { font-size: 1rem; }
+}
+.vault-session-controls { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 10px; }
+.vault-turn { scroll-margin-top: 90px; }
+.vault-turn .vault-asked-question { font-size: 1rem; color: var(--text-primary); background: var(--bg-elevated); border-radius: 8px; padding: 14px 16px; line-height: 1.6; }
+.vault-asked-question > span { display: block; font-size: .7rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+.vault-answer-label { font: 600 .75rem var(--font-sans); color: var(--brand-crimson); margin: 20px 0 12px; }
+.vault-followups { margin: 24px 0; display: grid; gap: 8px; }
+.vault-followups > span { font-size: .75rem; color: var(--text-secondary); margin-bottom: 4px; }
+.vault-followups > button { display: flex; justify-content: space-between; gap: 12px; border: 1px solid var(--border-subtle); border-radius: 7px; padding: 11px 14px; background: var(--bg-card); color: var(--text-primary); text-align: left; font: 400 .875rem/1.5 var(--font-sans); cursor: pointer; }
+.vault-followups > button:hover { border-color: var(--brand-crimson); }
+.vault-learning-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.vault-practice { display: grid; gap: 16px; margin-top: 20px; }
+.vault-practice article { border: 1px solid var(--border-subtle); border-radius: 8px; padding: 18px; }
+.vault-practice h4 { font: 600 .8125rem var(--font-sans); color: var(--text-secondary); margin-bottom: 10px; }
+.vault-practice p { font-size: .9375rem; line-height: 1.65; }
+.vault-practice details { margin-top: 14px; }
+.vault-practice summary { cursor: pointer; color: var(--brand-crimson); font-size: .875rem; }
+.vault-practice details .ai-answer { padding-top: 12px; }
+.vault-conversation + .vault-followups + .vault-ask-form, .vault-retry + .vault-ask-form { margin-top: 24px; }
+@media(max-width:600px) { .vault-session-controls { justify-content: flex-start; } .vault-learning-actions .btn { white-space: normal; } }

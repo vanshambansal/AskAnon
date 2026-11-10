@@ -1,0 +1,185 @@
+/* DuplicatePromptModal.css - Smart Semantic Duplicate Intercept */
+
+.duplicate-prompt-modal {
+  max-width: 520px;
+  width: 90%;
+  padding: 32px;
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: 1001;
+}
+
+.duplicate-modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  line-height: 1;
+  transition: all 0.15s ease;
+}
+
+.duplicate-modal-close:hover {
+  color: var(--text-primary);
+  background: var(--bg-elevated);
+}
+
+.duplicate-modal-header {
+  margin-bottom: 24px;
+}
+
+.duplicate-eyebrow-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #d97706;
+  background: rgba(217, 119, 6, 0.12);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+}
+
+.duplicate-modal-title {
+  font-family: var(--font-serif);
+  font-size: 1.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+}
+
+.duplicate-modal-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.duplicate-card-comparison {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.duplicate-match-box {
+  background: var(--bg-elevated);
+  border: 1px solid rgba(217, 119, 6, 0.35);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.duplicate-match-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.duplicate-match-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #d97706;
+}
+
+.duplicate-upvote-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--brand-crimson);
+  background: var(--brand-crimson-light);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.duplicate-match-text {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.duplicate-your-draft-box {
+  background: var(--bg-page);
+  border: 1px dashed var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+}
+
+.duplicate-draft-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.duplicate-draft-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.4;
+  font-style: italic;
+}
+
+.duplicate-modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.duplicate-upvote-btn {
+  width: 100%;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 12px;
+}
+
+.duplicate-post-anyway-btn {
+  width: 100%;
+  justify-content: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.duplicate-post-anyway-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-elevated);
+}
+
+.duplicate-modal-footer {
+  text-align: center;
+}
+
+.duplicate-edit-link {
+  background: none;
+  border: none;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: color 0.15s ease;
+}
+
+.duplicate-edit-link:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}

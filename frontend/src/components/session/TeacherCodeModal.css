@@ -1,0 +1,55 @@
+.teacher-code-modal {
+  width: 100%;
+  max-width: 620px;
+  background: var(--bg-surface, #14161b);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 1.75rem;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6);
+}
+
+.teacher-code-desc {
+  font-size: 0.875rem;
+  color: #94a3b8;
+  margin: -0.25rem 0 1.25rem 0;
+}
+
+.form-row-split {
+  display: flex;
+  gap: 1rem;
+}
+
+.flex-1 { flex: 1; }
+.flex-2 { flex: 2; }
+
+.code-editor-wrapper {
+  background: #090a0f;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.code-editor-wrapper:focus-within {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.teacher-code-textarea {
+  width: 100%;
+  padding: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #f1f5f9;
+  background: transparent;
+  border: none;
+  resize: vertical;
+  min-height: 180px;
+  outline: none;
+  tab-size: 2;
+}
+
+.teacher-code-textarea::placeholder {
+  color: #475569;
+}

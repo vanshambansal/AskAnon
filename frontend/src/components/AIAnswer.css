@@ -1,0 +1,16 @@
+.ai-answer { line-height: 1.7; white-space: normal; overflow-wrap: anywhere; color: var(--text-primary); }
+.ai-answer > :first-child { margin-top: 0; }
+.ai-answer > :last-child { margin-bottom: 0; }
+.ai-answer p, .ai-answer ul, .ai-answer ol { margin: .65rem 0; }
+.ai-answer ul, .ai-answer ol { padding-left: 1.4rem; }
+.ai-answer h1, .ai-answer h2, .ai-answer h3 { font-size: 1.05rem; margin: 1rem 0 .5rem; }
+.ai-answer pre { white-space: pre; overflow-x: auto; padding: .9rem; border-radius: 8px; background: var(--bg-secondary, #f3f4f6); }
+.ai-answer code { font-size: .9em; }
+.ai-answer-error { color: var(--danger, #b42318); }
+.material-index-status { padding: .6rem 1rem; color: var(--text-secondary); font-size: .8rem; line-height: 1.5; }
+.material-index-status p { margin: .4rem 0; }
+.ai-table-scroll { width: 100%; max-width: 100%; overflow-x: auto; margin: 16px 0; border: 1px solid var(--border-subtle); border-radius: 8px; }
+.ai-table-scroll table { width: 100%; min-width: 420px; border-collapse: collapse; font-size: .875rem; line-height: 1.6; }
+.ai-table-scroll th, .ai-table-scroll td { text-align: left; vertical-align: top; padding: 12px 14px; border-bottom: 1px solid var(--border-subtle); }
+.ai-table-scroll th { background: var(--bg-elevated); font-weight: 600; }
+.ai-table-scroll tr:last-child td { border-bottom: 0; }

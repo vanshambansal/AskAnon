@@ -1,0 +1,130 @@
+.lightbox-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 15, 0.88);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+.lightbox-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px;
+  background: rgba(20, 20, 28, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 1001;
+}
+
+.lightbox-caption-text {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.lightbox-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lightbox-tool-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.lightbox-tool-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.lightbox-tool-btn.zoom-level {
+  font-family: var(--font-mono);
+  min-width: 50px;
+  text-align: center;
+}
+
+.lightbox-tool-btn.download-btn {
+  background: var(--brand-crimson);
+  border-color: var(--brand-crimson);
+}
+
+.lightbox-tool-btn.download-btn:hover {
+  background: #a51833;
+}
+
+.lightbox-tool-btn.vault-btn {
+  background: rgba(217, 119, 6, 0.2);
+  border-color: rgba(217, 119, 6, 0.4);
+  color: #f59e0b;
+}
+
+.lightbox-tool-btn.vault-btn:hover {
+  background: rgba(217, 119, 6, 0.35);
+}
+
+.lightbox-close-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  margin-left: 6px;
+}
+
+.lightbox-close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.lightbox-stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  padding: 24px;
+}
+
+.lightbox-main-img {
+  max-width: 90vw;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: default;
+}
+
+.lightbox-footer {
+  text-align: center;
+  padding: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+}
+
+.lightbox-backdrop { color: #fff; height: 100dvh; }
+.lightbox-backdrop .lightbox-toolbar { flex-wrap: wrap; flex-shrink: 0; gap: 12px; }
+.lightbox-backdrop .lightbox-tools { flex-wrap: wrap; }
+.lightbox-backdrop .lightbox-stage { display: block; min-height: 0; padding: 16px; }
+.lightbox-image-wrap { display: flex; min-width: 100%; min-height: 100%; width: max-content; }
+.lightbox-backdrop .lightbox-main-img { display: block; margin: auto; max-width: none; max-height: none; flex-shrink: 0; transition: none; }
+.lightbox-error { margin: auto; text-align: center; }
+.lightbox-error p { margin-bottom: 16px; }
+.lightbox-backdrop .lightbox-footer { flex-shrink: 0; }
+@media (max-width: 600px) { .lightbox-backdrop .lightbox-toolbar { padding: 12px; } .lightbox-caption-box { width: 100%; } .lightbox-backdrop .lightbox-tool-btn { padding: 8px 10px; } }
