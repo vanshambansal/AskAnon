@@ -211,3 +211,26 @@ test('database-response fallback caches reads and invalidation removes local ent
   assert.equal((await getOrSetCache(key, 30, fetchValue)).version, 2);
   await invalidateCache(key);
 });
+
+for (const oldStatus of [404, 200, 503]) test(`email collision recovery requires deleted old identity (${oldStatus})`, async t => {
+  const old = { id: 98, clerk_user_id: 'deleted-identity', email: 'verified@example.test', role: 'teacher' };
+  mockMethod(t, prisma.user, 'findUnique', async ({ where }) => where.email ? old : null);
+  mockMethod(t, prisma.user, 'upsert', async () => { throw Object.assign(new Error('unique'), { code: 'P2002' }); });
+  const update = mockMethod(t, prisma.user, 'updateMany', async () => ({ count: 1 }));
+  t.mock.method(clerk.users, 'getUser', async id => {
+    if (id === old.clerk_user_id) {
+      if (oldStatus !== 200) throw Object.assign(new Error('lookup failed'), { status: oldStatus });
+      return {};
+    }
+    return { primaryEmailAddressId: 'email', emailAddresses: [{ id: 'email', emailAddress: old.email, verification: { status: 'verified' } }] };
+  });
+  const response = await request('/users/sync', { token: 'student', method: 'POST', body: { role: 'student' } });
+  assert.equal(response.status, oldStatus === 404 ? 200 : oldStatus === 200 ? 409 : 503);
+  assert.equal(update.mock.callCount(), oldStatus === 404 ? 1 : 0);
+  if (oldStatus === 404) {
+    const saved = await response.json();
+    assert.equal(saved.role, 'teacher');
+    assert.equal(saved.id, old.id);
+    assert.deepEqual(update.mock.calls[0].arguments[0].data, { clerk_user_id: 'student' });
+  }
+});

@@ -316,3 +316,9 @@ This file is maintained as a persistent, authoritative log of all architectural 
 - Validation: 56 unit tests, frontend lint/build and backend syntax checks passed. All 14 isolated classroom integration scenarios passed across six identities, including restart recovery; disposable records were cleaned up. Gemini responses in the integration harness are simulated, not proof of current provider quota.
 - Integration measurements still showed approximately 0.7–3.5 seconds for session creation and 2.6 seconds for queued deletion acknowledgement against the configured remote database. Background work and optimistic UI do not eliminate remote database latency.
 - Prepared five organized Git commits covering configuration, API, frontend, checks/tooling and documentation. Actual hosting configuration, production credentials/origins, backup restore and post-deployment rehearsal remain external steps.
+
+## 2026-11-10 — Returning-account onboarding recovery
+
+- Diagnosed role-selection failures as a unique-email collision with a deleted legacy Clerk identity (P2002), rather than a missing role selection.
+- Profile sync now reconnects the verified primary email only after Clerk confirms the previous identity is deleted (404). Saved role, profile ID and all owned/enrolled data are retained. Active identities and provider failures never permit reassignment.
+- Added regression coverage for deleted identity, active identity and provider outage; all 20 access tests pass.
