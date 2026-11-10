@@ -238,3 +238,32 @@ test('provider outage returns a retryable error without persisting unchecked tex
     assert.equal(writes, 0);
   } finally { prisma.$transaction = original; }
 });
+
+test('moderation overload falls back once and still rejects unrelated content', async () => {
+  const calls = [];
+  globalThis.fetch = async (url, options) => {
+    calls.push(String(url));
+    assert.equal(JSON.parse(options.body).generationConfig.fallbackModel, undefined);
+    return calls.length === 1 ? { ok: false, status: 503, json: async () => ({}) } : reply('{"isSafe":false,"category":"off_topic","reason":"Unrelated to the lecture"}');
+  };
+  const result = await checkAIModeration('Who will win the football match tomorrow? fallback fixture', 'CPU');
+  assert.equal(result.reviewed, true);
+  assert.equal(result.isSafe, false);
+  assert.equal(result.category, 'off_topic');
+  assert.equal(calls.length, 2);
+  assert.match(calls[1], /gemini-3.5-flash-lite/);
+});
+
+test('explicit moderation timeout policy allows one fallback within the shared deadline', async () => {
+  let calls = 0;
+  globalThis.fetch = async (url, options) => {
+    calls++;
+    const config = JSON.parse(options.body).generationConfig;
+    assert.equal(config.attemptTimeoutMs, undefined);
+    assert.equal(config.retryTimeout, undefined);
+    if (calls === 1) throw Object.assign(new Error('timeout'), { name: 'TimeoutError' });
+    return reply('checked');
+  };
+  assert.equal(await generateTextWithFallback('fixture', { retryTimeout: true, attemptTimeoutMs: 100, timeoutMs: 2000 }), 'checked');
+  assert.equal(calls, 2);
+});

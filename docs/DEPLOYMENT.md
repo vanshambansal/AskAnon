@@ -88,3 +88,12 @@ The owner can perform these steps manually; no hosting purchase or deployment wa
 6. Check backend /health and frontend direct routes. Use the stable production frontend domain; previews need explicit authorization configuration before being used for authenticated tests. Inspect deployment logs without publishing secrets.
 7. Use two accounts: new teacher registration, return sign-in, create lecture/course, student join/enrollment, questions/pinning/polls, upload/index/cited AI answer, recap and deletion. Test mobile layout and both direct route reloads and reconnect after backend restart. Confirm quota/provider errors leave useful retry states.
 8. Only share the demo after these checks. Keep sample documents public-safe, retain an off-computer backup and set a modest hosting/provider budget. GitHub checks and local tests do not replace this deployed rehearsal.
+
+## Current free hosted demo
+
+- Frontend: https://ask-anon-roan.vercel.app
+- Backend: https://askanon-5ntl.onrender.com
+- Use ALLOWED_ORIGINS=https://ask-anon-roan.vercel.app on Render and VITE_API_URL=https://askanon-5ntl.onrender.com on Vercel.
+- Disposable test data: owner deferred backup/restore as a deployment prerequisite. Retain the backup tooling for future important data.
+- Moderation now attempts one fallback on provider overload. Optional GEMINI_MODERATION_FALLBACK_MODEL defaults to gemini-3.5-flash-lite; it shares the existing Gemini key and does not guarantee recovery from provider-wide outages or exhausted quota.
+- GitHub push does not prove Render deployed it. Check Render's deployed commit and logs after automatic deployment, or manually deploy the latest commit.

@@ -334,3 +334,10 @@ This file is maintained as a persistent, authoritative log of all architectural 
 - Kept Sign In/Dashboard in desktop and mobile navigation, the main hero action and one final footer action.
 - Removed duplicate navigation Get Started buttons and the misleading Launch a Faculty Session action. Faculty information remains; registration uses one authentication-first flow with an explicit role choice for new accounts.
 - Frontend lint and production build passed.
+
+## 2026-11-10 — Hosted moderation overload recovery
+
+- Public frontend and backend returned HTTP 200; backend health reported API/database/Redis ready and allowed the exact Vercel origin.
+- A synthetic request to the configured primary Gemini model returned HTTP 503 UNAVAILABLE; the fallback model gemini-3.5-flash-lite returned HTTP 200 with complete output using the existing key.
+- Added one bounded moderation fallback on temporary provider 5xx responses, with a ten-second total deadline. Quota errors are not retried and unavailable checks still cannot publish unchecked questions. Provider failures log only error codes, not submissions or keys.
+- Optional GEMINI_MODERATION_FALLBACK_MODEL defaults to gemini-3.5-flash-lite. No second provider or API key is required. All 16 AI regression tests passed.

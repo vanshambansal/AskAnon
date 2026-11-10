@@ -34,22 +34,22 @@ export async function generateText(prompt, config = {}) {
     return text;
   } catch (error) {
     if (error instanceof AIUnavailable) throw error;
-    throw new AIUnavailable(error.name === 'TimeoutError' ? 'AI took too long. Please try again.' : undefined);
+    throw new AIUnavailable(error.name === 'TimeoutError' ? 'AI took too long. Please try again.' : undefined, 503, error.name === 'TimeoutError' ? 'AI_TIMEOUT' : 'AI_UNAVAILABLE');
   }
 }
 
 // Vault answers and PDF transcription may recover from overload once, within one total deadline.
 // Quota, invalid requests and incomplete output never trigger hidden retries.
 export async function generateTextWithFallback(prompt, config = {}) {
-  const { timeoutMs = 35000, ...options } = config;
+  const { timeoutMs = 35000, attemptTimeoutMs = timeoutMs, retryTimeout = false, fallbackModel = process.env.GEMINI_RAG_FALLBACK_MODEL || 'gemini-3.5-flash-lite', ...options } = config;
   const signal = options.signal ? AbortSignal.any([options.signal, AbortSignal.timeout(timeoutMs)]) : AbortSignal.timeout(timeoutMs);
   const primary = options.model || process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite';
-  try { return await generateText(prompt, { ...options, model: primary, signal, timeoutMs }); }
+  try { return await generateText(prompt, { ...options, model: primary, signal, timeoutMs: attemptTimeoutMs }); }
   catch (error) {
-    if (error.code !== 'AI_OVERLOADED' || signal.aborted) throw error;
+    if (!(error.code === 'AI_OVERLOADED' || (retryTimeout && error.code === 'AI_TIMEOUT')) || signal.aborted) throw error;
     await new Promise(resolve => setTimeout(resolve, 350));
     signal.throwIfAborted();
-    return generateText(prompt, { ...options, model: process.env.GEMINI_RAG_FALLBACK_MODEL || 'gemini-3.5-flash-lite', signal, timeoutMs });
+    return generateText(prompt, { ...options, model: fallbackModel, signal, timeoutMs });
   }
 }
 
