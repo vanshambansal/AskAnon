@@ -328,3 +328,9 @@ This file is maintained as a persistent, authoritative log of all architectural 
 - Both landing-page entry actions authenticate first. New users choose a role only after authentication; returning users retain their saved role.
 - Direct unsigned onboarding shows a sign-in/create-account action instead of role cards. Removed stale pre-auth role intent from dashboard synchronization.
 - Added Vercel client-route fallback and a manual Vercel/Railway deployment walkthrough. No hosting resources were created.
+
+## 2026-11-10 — Landing entry-point cleanup
+
+- Kept Sign In/Dashboard in desktop and mobile navigation, the main hero action and one final footer action.
+- Removed duplicate navigation Get Started buttons and the misleading Launch a Faculty Session action. Faculty information remains; registration uses one authentication-first flow with an explicit role choice for new accounts.
+- Frontend lint and production build passed.

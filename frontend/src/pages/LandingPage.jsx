@@ -165,16 +165,13 @@ export default function LandingPage() {
           <div className="nav-desktop-auth">
             {isSignedIn ? (
               <button className="btn btn-ghost btn-sm" onClick={() => navigate('/dashboard')}>
-                Go to Dashboard →
+                Dashboard →
               </button>
             ) : (
               <div className="nav-auth-group">
                 <SignInButton mode="modal">
                   <button disabled={!isLoaded} className="btn btn-ghost btn-sm">Sign In</button>
                 </SignInButton>
-                <button className="btn btn-primary btn-sm" disabled={!isLoaded} onClick={() => isSignedIn ? navigate('/dashboard') : openSignIn()}>
-                  Get Started →
-                </button>
               </div>
             )}
           </div>
@@ -197,16 +194,13 @@ export default function LandingPage() {
           <div className="mobile-menu-auth">
             {isSignedIn ? (
               <button className="btn btn-primary btn-lg w-100" onClick={() => navigate('/dashboard')}>
-                Go to Dashboard →
+                Dashboard →
               </button>
             ) : (
               <>
                 <SignInButton mode="modal">
-                  <button className="btn btn-ghost btn-lg w-100">Sign In</button>
+                  <button disabled={!isLoaded} className="btn btn-ghost btn-lg w-100">Sign In</button>
                 </SignInButton>
-                <button className="btn btn-primary btn-lg w-100" style={{marginTop: '12px'}} disabled={!isLoaded} onClick={() => isSignedIn ? navigate('/dashboard') : openSignIn()}>
-                  Get Started →
-                </button>
               </>
             )}
           </div>
@@ -400,11 +394,6 @@ export default function LandingPage() {
             <p className="faculty-text">
               Create a room. Share the code. Answer the questions that matter most.
             </p>
-            <div className="faculty-cta-group">
-              <button className="btn btn-primary btn-lg" disabled={!isLoaded} onClick={() => isSignedIn ? navigate('/dashboard') : openSignIn()}>
-                Launch a Faculty Session →
-              </button>
-            </div>
           </div>
           <div className="faculty-metric-grid"><div className="metric-cell"><span className="metric-number">Live</span><span className="metric-label">Questions and votes during class</span></div><div className="metric-cell"><span className="metric-number">One code</span><span className="metric-label">A simple way into your lecture</span></div><div className="metric-cell"><span className="metric-number">After class</span><span className="metric-label">Answers and resources to revisit</span></div></div>
         </div>
@@ -443,7 +432,7 @@ export default function LandingPage() {
           <p className="footer-quote">{tagline}</p>
           <div className="footer-cta-row">
             <button className="btn btn-primary btn-lg" disabled={!isLoaded} onClick={() => isSignedIn ? navigate('/dashboard') : openSignIn()}>
-              Open AskAnon →
+              {isSignedIn ? 'Go to Dashboard →' : 'Get Started →'}
             </button>
           </div>
         </div>
