@@ -1,4 +1,18 @@
 node_modules/
 .env
 dist/
-.DS_Store
+.DS_Store# Local configuration and secrets (keep examples only)
+.env*
+!.env.example
+*.pem
+*.key
+.local-backups/
+# Generated audit artifacts and local experiments
+.playwright-mcp/
+.vscode/
+tmp/
+backend/scratch/
+/phase4-faculty-mobile-before.png
+*.log
+*.dump
+*.backup

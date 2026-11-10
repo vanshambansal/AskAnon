@@ -8,9 +8,10 @@ const { Pool } = pg;
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false  
+    rejectUnauthorized: false
   },
-  max: 10,
+  max: 2,
+  connectionTimeoutMillis: 5000,
 });
 
 pool.connect((err, client, release) => {

@@ -1,11 +1,13 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions", "relationJoins"]
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  directUrl  = env("DIRECT_URL")
+  extensions = [pgvector(map: "vector")]
 }
 
 model User {
@@ -16,42 +18,91 @@ model User {
   role          String   @default("student")
   created_at    DateTime @default(now())
 
-  sessions Session[]
-  votes    Vote[]
+  sessions    Session[]
+  votes       Vote[]
+  courses     Course[]            @relation("TeacherCourses")
+  enrollments CourseEnrollment[]
+  bookmarks   Bookmark[]
+  deletionJobs SessionDeletionJob[]
 
   @@map("users")
+}
+
+model Course {
+  id          Int      @id @default(autoincrement())
+  course_code String   @unique
+  title       String
+  description String?
+  teacher_id  Int
+  created_at  DateTime @default(now())
+
+  teacher     User               @relation("TeacherCourses", fields: [teacher_id], references: [id])
+  sessions    Session[]
+  materials   CourseMaterial[]
+  enrollments CourseEnrollment[]
+
+  @@index([teacher_id])
+  @@map("courses")
 }
 
 model Session {
   id           Int       @id @default(autoincrement())
   teacher_id   Int
+  course_id    Int?
   session_code String    @unique
   title        String
   subject      String?
   is_active    Boolean   @default(true)
+  is_paused    Boolean   @default(false)
   started_at   DateTime  @default(now())
   ended_at     DateTime?
+  ai_summary   Json?
+  deletion_job_id String?
 
-  teacher   User           @relation(fields: [teacher_id], references: [id])
+  teacher   User             @relation(fields: [teacher_id], references: [id])
+  course    Course?          @relation(fields: [course_id], references: [id])
   questions Question[]
   media     SessionMedia[]
+  materials CourseMaterial[]
+  polls     Poll[]
+  deletionJob SessionDeletionJob? @relation(fields: [deletion_job_id], references: [id], onDelete: SetNull)
 
+  @@index([teacher_id])
+  @@index([course_id])
+  @@index([deletion_job_id])
+  @@index([is_active, started_at(sort: Desc)])
   @@map("sessions")
 }
 
 model Question {
-  id            Int      @id @default(autoincrement())
+  id            Int       @id @default(autoincrement())
   session_id    Int
   question_text String
-  upvotes       Int      @default(0)
-  is_answered   Boolean  @default(false)
+  content_type  String    @default("QUESTION") // QUESTION, NOTE, CODE
+  image_public_id String?
+  upvotes       Int       @default(0)
+  is_answered   Boolean   @default(false)
+  status        String    @default("PENDING") // PENDING, PINNED, ANSWERED, DISMISSED
+  moderation_status String @default("legacy")
+  moderation_reason String?
+  pinned_at     DateTime?
   category      String?
   image_url     String?
-  created_at    DateTime @default(now())
+  code_snippet  String?
+  code_language String?
+  answer_text   String?
+  answered_at   DateTime?
+  related_to_id Int?
+  related_text  String?
+  created_at    DateTime  @default(now())
 
-  session Session @relation(fields: [session_id], references: [id])
-  votes   Vote[]
+  session   Session    @relation(fields: [session_id], references: [id])
+  votes     Vote[]
+  bookmarks Bookmark[]
 
+  @@index([session_id])
+  @@index([session_id, upvotes(sort: Desc), created_at(sort: Asc)])
+  @@index([status])
   @@map("questions")
 }
 
@@ -65,6 +116,7 @@ model Vote {
   user     User     @relation(fields: [user_id], references: [id])
 
   @@unique([question_id, user_id])
+  @@index([user_id])
   @@map("votes")
 }
 
@@ -76,7 +128,156 @@ model SessionMedia {
   caption     String?
   uploaded_at DateTime @default(now())
 
+
   session Session @relation(fields: [session_id], references: [id])
 
   @@map("session_media")
+}
+
+model CourseMaterial {
+  id          Int      @id @default(autoincrement())
+  course_id   Int
+  session_id  Int?
+  title       String
+  file_url    String
+  public_id   String
+  file_type   String   @default("pdf")
+  file_size   Int?
+  category    String?  @default("Lecture Slides") // Lecture Slides, Notes, Handout, Problem Sheet
+  uploaded_at DateTime @default(now())
+
+  course  Course   @relation(fields: [course_id], references: [id])
+  session Session? @relation(fields: [session_id], references: [id])
+  chunks  MaterialChunk[]
+
+  index_status String @default("pending")
+  index_error String?
+  indexed_at DateTime?
+
+
+  @@index([course_id])
+  @@index([session_id])
+  @@map("course_materials")
+}
+
+model CourseEnrollment {
+  id        Int      @id @default(autoincrement())
+  user_id   Int
+  course_id Int
+  joined_at DateTime @default(now())
+
+  user   User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [course_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, course_id])
+  @@index([user_id])
+  @@index([course_id])
+  @@map("course_enrollments")
+}
+
+model Bookmark {
+  id          Int      @id @default(autoincrement())
+  user_id     Int
+  question_id Int
+  created_at  DateTime @default(now())
+
+  user     User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [question_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, question_id])
+  @@index([user_id])
+  @@index([question_id])
+  @@map("bookmarks")
+}
+
+model Poll {
+  id          Int          @id @default(autoincrement())
+  session_id  Int
+  question    String
+  is_active   Boolean      @default(true)
+  is_visible  Boolean      @default(true)
+  created_at  DateTime     @default(now())
+  ended_at    DateTime?
+
+  session     Session      @relation(fields: [session_id], references: [id], onDelete: Cascade)
+  options     PollOption[]
+  votes       PollVote[]
+
+  @@index([session_id])
+  @@map("polls")
+}
+
+model PollOption {
+  id         Int        @id @default(autoincrement())
+  poll_id    Int
+  text       String
+  votes      Int        @default(0)
+  index      Int
+
+  poll       Poll       @relation(fields: [poll_id], references: [id], onDelete: Cascade)
+  poll_votes PollVote[]
+
+  @@index([poll_id])
+  @@map("poll_options")
+}
+
+model PollVote {
+  id         Int        @id @default(autoincrement())
+  poll_id    Int
+  option_id  Int
+  user_id    Int?
+  voter_key  String
+  created_at DateTime   @default(now())
+
+  poll       Poll       @relation(fields: [poll_id], references: [id], onDelete: Cascade)
+  option     PollOption @relation(fields: [option_id], references: [id], onDelete: Cascade)
+
+  @@unique([poll_id, voter_key])
+  @@map("poll_votes")
+}
+
+model MaterialChunk {
+  id          String         @id @default(uuid())
+  material_id Int
+  chunk_text  String
+  chunk_index Int @default(0)
+  page_number Int?
+  embedding   Unsupported("vector(768)")?
+  created_at  DateTime       @default(now())
+
+  material    CourseMaterial @relation(fields: [material_id], references: [id], onDelete: Cascade)
+
+  @@index([material_id])
+  @@map("material_chunks")
+}
+
+model StorageCleanup {
+  public_id     String
+  resource_type String
+  not_before    DateTime @default(now())
+  attempts      Int      @default(0)
+
+  @@id([public_id, resource_type])
+  @@map("storage_cleanup")
+}
+
+model SessionDeletionJob {
+  id          String   @id @default(uuid())
+  owner_id    Int
+  sessions    Json
+  batch       Boolean  @default(false)
+  status      String   @default("QUEUED")
+  attempts    Int      @default(0)
+  error       String?
+  available_at DateTime @default(now())
+  lease_until DateTime?
+  lease_token String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  owner       User     @relation(fields: [owner_id], references: [id], onDelete: Cascade)
+  lectures    Session[]
+
+  @@index([status, available_at])
+  @@index([owner_id])
+  @@map("session_deletion_jobs")
 }
