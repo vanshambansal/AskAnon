@@ -358,3 +358,10 @@ This file is maintained as a persistent, authoritative log of all architectural 
 - Added a screenshot captured from the public landing page, inspected for layout and absence of signed-in personal data.
 - Added fresh-checkout configuration, empty-database bootstrap, existing-database safety guidance, local run commands and verification instructions.
 - Checked 16 local links, fenced blocks, secret patterns and whitespace. No application/environment changes or database commands were executed.
+
+
+## 2026-11-16 - Practical system-design chapter
+
+- Added a dedicated interview chapter tracing indexes, Redis/cache invalidation, pooling, transactions, commit/event consistency, idempotency, background recovery, rate limits, pagination, scaling and RAG latency through current code.
+- Included query/index examples, measurement guidance, safe performance claims, implementation tradeoffs and twelve spoken-answer drills. Future outbox/queue/scaling options are explicitly separated from existing features.
+- Linked the chapter from the handbook, reliability chapter, interview guide and root README. Documentation only; no database, application, dependency or environment changes.

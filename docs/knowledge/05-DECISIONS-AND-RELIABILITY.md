@@ -1,5 +1,7 @@
 # Decisions, reliability and honest tradeoffs
 
+For deeper worked scenarios and performance-measurement guidance, continue to [System design in practice](08-SYSTEM-DESIGN-IN-PRACTICE.md).
+
 ## How to explain a decision
 
 Describe the problem, approach and tradeoff rather than saying a technology is “best.” The implementation below is verified from code. Unless explicitly stated as a product rule, the suitability explanations are **engineering interpretations**, not proof of the original author's reasoning or a measured comparison.

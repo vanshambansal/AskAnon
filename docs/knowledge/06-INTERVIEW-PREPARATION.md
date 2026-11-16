@@ -2,6 +2,8 @@
 
 Use answers as explanations to understand, not scripts to recite. Questions 1–23 focus on AI/RAG. Source detail is in [AI explained](04-AI-AND-RAG-EXPLAINED.md); other answers link to the relevant chapter. Examples of personal contribution must be adapted honestly to your work, including AI-assisted development.
 
+For worked explanations of indexes, Redis, concurrency, retry safety, pagination and performance measurement, use [System design in practice](08-SYSTEM-DESIGN-IN-PRACTICE.md). Its interview drill prepares you for follow-up questions beyond these concise answers.
+
 ## AI foundations and implementation
 
 ### 1. What is RAG, and why does AskAnon need it?

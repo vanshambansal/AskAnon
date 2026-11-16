@@ -11,12 +11,15 @@ Start here to understand the project, explain its code and prepare for interview
 | Trace an action through the application | [Feature implementation](03-HOW-FEATURES-WORK.md) |
 | Learn and explain RAG from the beginning | [AI and RAG](04-AI-AND-RAG-EXPLAINED.md) |
 | Defend decisions and discuss failures | [Decisions and reliability](05-DECISIONS-AND-RELIABILITY.md) |
+| Prepare for deeper system-design follow-ups | [System design in practice](08-SYSTEM-DESIGN-IN-PRACTICE.md) |
 | Practise spoken answers and a demo | [Interview preparation](06-INTERVIEW-PREPARATION.md) |
 | Brief another developer or AI | [Copyable master context](07-MASTER-CONTEXT.md) |
 
 For a 30-minute revision, read the product pitch, the architecture diagram, the question and RAG flows, then answer interview questions 1, 4, 10, 18, 24, 27, 32 and 40 aloud. That is revision, not a substitute for learning the implementation.
 
 ## How to use this handbook
+
+Read the core chapters first. Use the system-design chapter as a deeper reference when practising implementation tradeoffs; it is not required for the quick revision path.
 
 ## Evidence and currency
 

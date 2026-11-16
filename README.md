@@ -4,7 +4,7 @@
 
 A real-time classroom Q&A platform that connects live discussion with after-class study. Students ask without displaying their names, teachers respond to the questions that matter, and a course companion answers questions using uploaded PDFs and retrieved evidence.
 
-[Live demo](https://ask-anon-roan.vercel.app/) ? [Project handbook](docs/knowledge/README.md) ? [Local setup](docs/LOCAL_SETUP.md) ? [Deployment](docs/DEPLOYMENT.md)
+[Live demo](https://ask-anon-roan.vercel.app/) - [Project handbook](docs/knowledge/README.md) - [Local setup](docs/LOCAL_SETUP.md) - [Deployment](docs/DEPLOYMENT.md)
 
 ![AskAnon landing page showing the classroom Q&A and course-study experience](docs/images/askanon-home.png)
 
@@ -38,11 +38,11 @@ AskAnon uses several distinct AI workflows:
 The RAG pipeline has two stages:
 
 ```text
-PDF upload ? page text extraction ? bounded scanned-page transcription if needed
-           ? text chunks ? 768-dimensional embeddings ? PostgreSQL / pgvector
+PDF upload - page text extraction - bounded scanned-page transcription if needed
+           - text chunks - 768-dimensional embeddings - PostgreSQL / pgvector
 
-Student question ? authorized course/material scope ? semantic retrieval
-                 ? neighboring passages ? Gemini answer ? sources and evidence
+Student question - authorized course/material scope - semantic retrieval
+                 - neighboring passages - Gemini answer - sources and evidence
 ```
 
 Original files stay in Cloudinary. Chunk text, page metadata and vectors stay in PostgreSQL. Gemini generates explanations from selected excerpts; the application does not train a model on the PDFs. Overview/revision requests use sampled passages rather than claiming to read every page.
@@ -158,13 +158,13 @@ The repository includes a bootstrap SQL file because the historical migration ch
 
 ### 5. Start both applications
 
-Terminal 1 ? backend:
+Terminal 1 - backend:
 
 ```sh
 npm --prefix backend run dev
 ```
 
-Terminal 2 ? frontend:
+Terminal 2 - frontend:
 
 ```sh
 npm --prefix frontend run dev -- --host 127.0.0.1
@@ -233,11 +233,12 @@ The hosted demo uses **Vercel for the frontend** and **one persistent Render bac
 
 ## Documentation
 
-- [Knowledge handbook](docs/knowledge/README.md) ? start here to understand the project.
-- [Code and database map](docs/knowledge/02-CODE-AND-DATABASE.md) ? important files, schema and relationships.
-- [AI and RAG explained](docs/knowledge/04-AI-AND-RAG-EXPLAINED.md) ? concepts, implementation and tradeoffs.
-- [Local setup](docs/LOCAL_SETUP.md) and [deployment](docs/DEPLOYMENT.md) ? operational details.
-- [Interview preparation](docs/knowledge/06-INTERVIEW-PREPARATION.md) ? 45 questions and a demo walkthrough.
-- [Changelog](CHANGELOG.md) ? development record.
+- [Knowledge handbook](docs/knowledge/README.md) - start here to understand the project.
+- [Code and database map](docs/knowledge/02-CODE-AND-DATABASE.md) - important files, schema and relationships.
+- [AI and RAG explained](docs/knowledge/04-AI-AND-RAG-EXPLAINED.md) - concepts, implementation and tradeoffs.
+- [Local setup](docs/LOCAL_SETUP.md) and [deployment](docs/DEPLOYMENT.md) - operational details.
+- [Interview preparation](docs/knowledge/06-INTERVIEW-PREPARATION.md) - 45 questions and a demo walkthrough.
+- [System design in practice](docs/knowledge/08-SYSTEM-DESIGN-IN-PRACTICE.md) - indexes, Redis, concurrency, recovery, scaling and performance measurement.
+- [Changelog](CHANGELOG.md) - development record.
 
 Crafted by [Vansham Bansal](https://github.com/vanshambansal).
