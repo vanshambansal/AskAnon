@@ -49,6 +49,7 @@ Includes backend syntax and isolated authorization/lifecycle/AI tests, frontend 
 
 ## Deployment and documentation
 
+- [Knowledge and interview handbook](docs/knowledge/README.md)
 - [Documentation index](docs/README.md)
 - [Simple deployment guide and known limits](docs/DEPLOYMENT.md)
 - [AI architecture, flowchart and index inspection](docs/AI_ARCHITECTURE.md)

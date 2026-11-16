@@ -341,3 +341,12 @@ This file is maintained as a persistent, authoritative log of all architectural 
 - A synthetic request to the configured primary Gemini model returned HTTP 503 UNAVAILABLE; the fallback model gemini-3.5-flash-lite returned HTTP 200 with complete output using the existing key.
 - Added one bounded moderation fallback on temporary provider 5xx responses or primary timeout, with a four-second primary attempt and ten-second total deadline. Quota errors are not retried and unavailable checks still cannot publish unchecked questions. Provider failures log only error codes, not submissions or keys.
 - Optional GEMINI_MODERATION_FALLBACK_MODEL defaults to gemini-3.5-flash-lite. No second provider or API key is required. All 17 AI regression tests passed. Live fallback checks accepted an academic CPU question and rejected an unrelated sports question.
+
+
+## 2026-11-16 ? Project knowledge and interview handbook
+
+- Added docs/knowledge/ as the main study entry point: product, architecture, major code paths, schema, feature flows, implementation decisions and reliability.
+- Explained AI/RAG from first principles through the actual PDF ingestion and scoped retrieval pipeline, with explicit distinctions from moderation, duplicate detection and recaps.
+- Added 45 focused interview answers, a demo script and a self-contained master context. Kept deeper detail in owning chapters rather than repeating tutorials.
+- Linked the handbook from both documentation indexes and marked earlier AI notes as dated references. No application, schema, dependency, environment or deployment settings were changed.
+- Verified local documentation links, source references, fenced blocks, question count, secret patterns and whitespace. App/provider/deployment acceptance checks were not rerun for this documentation-only task.

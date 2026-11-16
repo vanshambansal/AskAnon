@@ -1,5 +1,7 @@
 # Explaining AskAnon's AI in an interview
 
+> Dated reference. Start with the [current knowledge handbook](knowledge/README.md), especially [AI and RAG explained](knowledge/04-AI-AND-RAG-EXPLAINED.md). Historical verification statements below do not establish current deployed health.
+
 AskAnon helps students ask questions during a lecture and revise afterward. AI has two specific jobs, rather than being a generic chat widget.
 
 ## 1. Keep the live discussion useful

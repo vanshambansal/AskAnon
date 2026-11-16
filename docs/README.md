@@ -1,5 +1,9 @@
 # Documentation
 
+## Start here
+
+- [Knowledge and interview handbook](knowledge/README.md): product, code, schema, AI/RAG, decisions, interviews and a reusable master context.
+
 ## Current guidance
 
 - [Local setup and database migration notes](LOCAL_SETUP.md)

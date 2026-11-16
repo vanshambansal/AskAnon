@@ -1,5 +1,7 @@
 # AskAnon Course Vault AI - implementation and walkthrough
 
+> Dated reference. Start with the [current knowledge handbook](knowledge/README.md), especially [AI and RAG explained](knowledge/04-AI-AND-RAG-EXPLAINED.md). Historical verification statements below do not establish current deployed health.
+
 Verified on 7 November 2026. This describes the code and database in this workspace, not a proposed architecture.
 
 ## What the user does
