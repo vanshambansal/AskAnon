@@ -365,3 +365,11 @@ This file is maintained as a persistent, authoritative log of all architectural 
 - Added a dedicated interview chapter tracing indexes, Redis/cache invalidation, pooling, transactions, commit/event consistency, idempotency, background recovery, rate limits, pagination, scaling and RAG latency through current code.
 - Included query/index examples, measurement guidance, safe performance claims, implementation tradeoffs and twelve spoken-answer drills. Future outbox/queue/scaling options are explicitly separated from existing features.
 - Linked the chapter from the handbook, reliability chapter, interview guide and root README. Documentation only; no database, application, dependency or environment changes.
+
+
+## 2026-11-16 - Six-hour lecture expiry
+
+- Added automatic six-hour lifetime derived from started_at, with ordinary ended state and existing event payloads. Manual and automatic ending share transactional session/poll closure.
+- Added startup/minute sweeps, request catch-up before relevant cached views, and deadline checks for question/vote/poll/pause writes. Existing overdue lectures end when the updated backend starts.
+- Preserved all lecture/vault content. No schema changes, new environment values, expired tab, account-deletion work or automatic mass AI generation. The creation dialog explains the lifetime.
+- Added nine isolated boundary/recovery/permission/idempotency/late-write tests. All 67 backend and 3 frontend tests, 44 backend syntax checks, frontend lint and production build passed. Live hosted expiry has not been manually verified.

@@ -69,6 +69,8 @@ Evidence: [socket handler](../../backend/src/socket/socketHandler.js), [poll ser
 
 Upload middleware validates authorization before external storage where configured. Cloudinary stores the file; a transaction creates its material record and links its course/session. The HTTP response confirms the upload, not completed AI indexing. PDFs start background indexing; images remain viewable resources. If a file uploaded but metadata creation failed, the asset is queued for cleanup.
 
+Sessions also end automatically six hours after creation. A minute-based worker and startup/request catch-up persist the normal ended state; question/vote/poll writes enforce the deadline even before a sweep. No separate expired status or content deletion is introduced. See [sessionExpiry](../../backend/src/utils/sessionExpiry.js).
+
 Ending a session commits ended state and closes polls, then notifies clients. AI recap generation is separate from this essential lifecycle action. It summarizes selected discussion, written answers and polls; an unavailable recap does not mean ending the session failed.
 
 Lecture deletion returns **202 Accepted** after a durable deletion job is committed. Access is blocked while pruning proceeds. The worker retries failures and can reclaim an expired lease after restart. Completion invalidates caches and sends single/batch deletion events. This separates “request accepted” from “all cleanup finished.” Course removal has a different lifecycle: it detaches lectures and removes course-owned materials rather than calling lecture deletion for each session.

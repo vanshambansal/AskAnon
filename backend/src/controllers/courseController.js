@@ -1,3 +1,4 @@
+import { expireDueSessions } from '../utils/sessionExpiry.js';
 import { sendAIError } from '../utils/geminiClient.js';
 import { removeCourse } from '../utils/sessionLifecycle.js';
 import { invalidateSession, workspaceChanged } from '../utils/classroomEvents.js';
@@ -73,6 +74,7 @@ export const getCoursesByTeacher = async (req, res) => {
 // Get course details with all sessions and materials
 export const getCourseById = async (req, res) => {
   try {
+    await expireDueSessions(req.app.get('io'));
     const { id } = req.params;
     const cId = parseInt(id);
 

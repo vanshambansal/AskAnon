@@ -1,3 +1,4 @@
+import { isSessionExpired } from '../utils/sessionExpiry.js';
 import { timeOperation } from '../utils/requestTiming.js';
 import prisma from '../config/prisma.js';
 import { checkLocalProfanity, checkAIModeration } from '../utils/contentModerator.js';
@@ -47,7 +48,7 @@ export const createQuestion = async (req, res, next) => {
     }
     const { question, session } = await classroomTransaction(async tx => {
       const session = await tx.session.findUnique({ where: { id: positiveId(body.session_id) } });
-      if (!session?.is_active || session.deletion_job_id) fail(409, 'This lecture has ended');
+      if (!session?.is_active || isSessionExpired(session) || session.deletion_job_id) fail(409, 'This lecture has ended');
       if (type !== 'QUESTION') assertOwner(req.user, session.teacher_id);
       if (session.is_paused && req.user.id !== session.teacher_id) fail(409, 'Question intake is paused by the professor');
       let related = null;
@@ -123,7 +124,7 @@ export const upvoteQuestion = async (req, res, next) => {
       const existing = await tx.question.findUnique({ where: { id: positiveId(req.params.id) }, include: { session: true } });
       if (!existing) fail(404, 'Question not found');
       if (existing.session.teacher_id === req.user.id && req.user.role === 'teacher') fail(403, 'Hosts cannot upvote their own lecture questions');
-      if (existing.session.deletion_job_id || !existing.session.is_active || existing.is_answered || !['PENDING', 'PINNED'].includes(existing.status)) fail(409, 'Voting is closed for this question');
+      if (existing.session.deletion_job_id || !existing.session.is_active || isSessionExpired(existing.session) || existing.is_answered || !['PENDING', 'PINNED'].includes(existing.status)) fail(409, 'Voting is closed for this question');
       await tx.vote.create({ data: { question_id: existing.id, user_id: req.user.id } });
       const question = await tx.question.update({ where: { id: existing.id }, data: { upvotes: { increment: 1 } } });
       return { question, session: existing.session };

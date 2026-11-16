@@ -24,6 +24,8 @@ A person signs in, chooses **Student** or **Teacher** once, and returns to that 
 | Polls with live results | PDF-grounded AI answers, follow-ups and generated practice |
 | Context-aware checks for abusive or unrelated written questions | Source links and inspectable retrieved passages |
 
+Live sessions automatically end after six hours and appear as ordinary ended lectures; their discussion and materials are preserved.
+
 A session can start without a course. Uploading material or saving a diagram to its vault creates or reuses the teacher's general course and links the session. Courses group related lectures and resources; they do not require institutional enrollment management.
 
 ## AI that works with course material

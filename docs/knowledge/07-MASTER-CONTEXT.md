@@ -33,6 +33,8 @@ Most resource writes use HTTP. After commit the backend invalidates caches and b
 
 Question POST validates, runs local/contextual checks and rechecks lecture state inside a transaction before insertion. Unavailable written moderation blocks publication and keeps the draft. Instructor broadcasts and image-only content have distinct paths; images are not automatically abuse-moderated. Duplicate checks are optional and may fail open, but do not bypass final moderation.
 
+Sessions automatically end six hours after creation using the normal ended state and poll closure. Startup/minute sweeps and relevant reads catch up overdue sessions; live writes check the deadline. Existing content remains. No schema migration or new expired-state UI is needed. The implementation is utils/sessionExpiry.js.
+
 ## AI and RAG implementation
 
 `utils/ragService.js` owns the PDF pipeline. Upload metadata is persisted separately from background indexing. Native page text comes from pdf-parse; pages with very little text can be rendered and transcribed through `pdfTextService.js`. Bounded chunks of about 1,200 characters retain page/sequence metadata. There is no explicit chunk overlap.

@@ -1,3 +1,4 @@
+import { SESSION_LIFETIME_MS } from '../utils/sessionExpiry.js';
 import prisma from '../config/prisma.js';
 import { authenticateToken } from '../middleware/authMiddleware.js';
 import { sessionAccess, fail } from '../middleware/accessMiddleware.js';
@@ -45,7 +46,7 @@ export const initSocket = io => {
     });
     for (const [event, paused] of [['pause-session', true], ['resume-session', false]]) {
       on(event, true, async (user, session) => {
-        const changed = await prisma.session.updateMany({ where: { id: session.id, is_active: true, deletion_job_id: null }, data: { is_paused: paused } });
+        const changed = await prisma.session.updateMany({ where: { id: session.id, is_active: true, deletion_job_id: null, started_at: { gt: new Date(Date.now() - SESSION_LIFETIME_MS) } }, data: { is_paused: paused } });
         if (!changed.count) fail(409, 'This lecture has ended');
         await invalidateSession(session);
         io.to(session.session_code).emit(paused ? 'session-paused' : 'session-resumed', { sessionCode: session.session_code, isPaused: paused });

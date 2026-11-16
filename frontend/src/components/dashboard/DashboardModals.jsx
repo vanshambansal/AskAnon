@@ -39,7 +39,7 @@ export default function DashboardModals({
         <div className="modal-backdrop" onClick={() => !(creating) && setShowCreate(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <h2>Start Instant Lecture Room</h2>
-            <p className="modal-sub">Launch a room code for your students to join instantly.</p>
+            <p className="modal-sub">Share a room code with your students. Lectures end automatically after 6 hours.</p>
 
             <div className="form-group">
               <label>Lecture Topic / Title *</label>

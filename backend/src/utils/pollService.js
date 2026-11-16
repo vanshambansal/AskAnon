@@ -1,3 +1,4 @@
+import { isSessionExpired } from './sessionExpiry.js';
 import prisma from '../config/prisma.js';
 import { classroomTransaction } from './transaction.js';
 import { assertOwner, positiveId, fail } from '../middleware/accessMiddleware.js';
@@ -15,7 +16,7 @@ export async function currentPoll(sessionId, userId) {
 export async function mutatePoll(user, sessionId, action, input = {}) {
   return classroomTransaction(async tx => {
     const session = await tx.session.findUnique({ where: { id: sessionId } });
-    if (!session?.is_active || session.deletion_job_id) fail(409, 'This lecture has ended');
+    if (!session?.is_active || isSessionExpired(session) || session.deletion_job_id) fail(409, 'This lecture has ended');
     if (action !== 'vote') assertOwner(user, session.teacher_id);
     if (action === 'start') {
       const question = typeof input.question === 'string' ? input.question.trim() : '';

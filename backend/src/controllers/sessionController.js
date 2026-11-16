@@ -1,3 +1,4 @@
+import { finishSession, expireDueSessions } from '../utils/sessionExpiry.js';
 import { queueLectureDeletion, retryLectureDeletion, kickDeletionWorker, deletionJobSelect } from '../utils/sessionDeletionJobs.js';
 import { timeOperation } from '../utils/requestTiming.js';
 import { sendAIError } from '../utils/geminiClient.js';
@@ -190,24 +191,13 @@ export const getSessionRoomBundle = async (req, res) => {
 
 export const endSession = async (req, res) => {
   const { id } = req.params;
-  const { user_id } = req.body;
   const sessionId = parseInt(id);
 
   try {
-    const { existing, session } = await classroomTransaction(async tx => {
-      const existing = await tx.session.findUnique({ where: { id: sessionId } });
-      if (!existing) fail(404, 'Session not found');
-      assertOwner(req.user, existing.teacher_id);
-      if (existing.deletion_job_id) fail(410, 'This lecture is queued for deletion');
-      const session = await tx.session.update({ where: { id: sessionId }, data: { is_active: false, is_paused: false, ended_at: existing.ended_at || new Date() } });
-      await tx.poll.updateMany({ where: { session_id: sessionId, is_active: true }, data: { is_active: false, ended_at: new Date() } });
-      return { existing, session };
-    });
-    await invalidateSession(session);
-    roomEvent(req.app.get('io'), session, 'session-ended', { sessionId: session.id, sessionCode: session.session_code, message: 'The lecture has ended.' });
+    const { session, changed } = await finishSession(sessionId, { user: req.user, io: req.app.get('io') });
     res.json({ message: 'Session ended', session });
 
-    if (existing.is_active && process.env.GEMINI_API_KEY) {
+    if (changed && process.env.GEMINI_API_KEY) {
       setImmediate(() => lectureInsights(session).catch(err => console.warn('Background recap unavailable:', err.status || err.code || err.name)));
     }
 
@@ -216,7 +206,7 @@ export const endSession = async (req, res) => {
       return res.status(404).json({ error: 'Session not found' });
     }
     console.error('endSession error:', err.message);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(err.status || 500).json({ error: err.status ? err.message : 'Internal server error' });
   }
 };
 
@@ -225,6 +215,7 @@ export const getSessionsByTeacher = async (req, res) => {
   const tId = parseInt(teacherId);
 
   try {
+    await expireDueSessions(req.app.get('io'));
     const sessions = await getOrSetCache(`cache:sessions:teacher:${tId}`, 300, async () => {
       return prisma.session.findMany({
         where: { teacher_id: tId },
@@ -265,6 +256,7 @@ export const getSessionsByTeacher = async (req, res) => {
 
 export const getActiveSessions = async (req, res) => {
   try {
+    await expireDueSessions(req.app.get('io'));
     const sessions = await prisma.session.findMany({
       where: { deletion_job_id: null, is_active: true, OR: [{ teacher_id: req.user.id }, { course: { enrollments: { some: { user_id: req.user.id } } } }] },
       include: {
@@ -287,6 +279,7 @@ export const getActiveSessions = async (req, res) => {
 
 export const getActiveSessionsForStudent = async (req, res) => {
   try {
+    await expireDueSessions(req.app.get('io'));
     const { userId } = req.params;
     const studentId = parseInt(userId);
 
@@ -321,6 +314,7 @@ export const getActiveSessionsForStudent = async (req, res) => {
 
 export const getStudentSessionHistory = async (req, res) => {
   try {
+    await expireDueSessions(req.app.get('io'));
     const { userId } = req.params;
     const studentId = parseInt(userId);
 

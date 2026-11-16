@@ -97,3 +97,12 @@ The owner can perform these steps manually; no hosting purchase or deployment wa
 - Disposable test data: owner deferred backup/restore as a deployment prerequisite. Retain the backup tooling for future important data.
 - Moderation now attempts one fallback on provider overload. Optional GEMINI_MODERATION_FALLBACK_MODEL defaults to gemini-3.5-flash-lite; it shares the existing Gemini key and does not guarantee recovery from provider-wide outages or exhausted quota.
 - GitHub push does not prove Render deployed it. Check Render's deployed commit and logs after automatic deployment, or manually deploy the latest commit.
+
+
+## Six-hour lecture lifetime
+
+Live lectures automatically become ordinary ended lectures six hours after started_at. The existing timestamp is used, so no schema migration or new environment variable is required. This also applies to existing live sessions older than six hours when the new backend starts.
+
+The backend checks at startup and every minute. Relevant room access and dashboard/history/course-detail reads catch up overdue state; question creation, upvotes, poll actions and pause/resume enforce the deadline at write time. While a free host sleeps, the database is reconciled when it resumes or handles a relevant request; no browser timer is treated as authoritative.
+
+Ending clears paused state, closes active polls, invalidates caches and uses the existing session-ended event. Questions, written answers and vault resources remain; no separate expired category is added. ended_at records when the server performs the transition, which can be later than the deadline after a sleeping backend. Automatic expiry does not launch a batch of AI calls; recap generation remains available through the existing insight request path.

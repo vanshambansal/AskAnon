@@ -1,3 +1,4 @@
+import { configureSessionExpiry, expireDueSessions } from './utils/sessionExpiry.js';
 import { processDeletionJobs } from './utils/sessionDeletionJobs.js';
 import { retryAssetCleanup } from './utils/storageLifecycle.js';
 import express from 'express';
@@ -60,7 +61,11 @@ app.get('/', (req, res) => {
   res.json({ message: 'AskAnon backend is running! 🚀' });
 });
 
+configureSessionExpiry(io);
 initSocket(io);
+const expiryTimer = setInterval(() => expireDueSessions(io).catch(() => console.warn('Lecture expiry will retry')), 60000);
+expiryTimer.unref();
+expireDueSessions(io).catch(() => console.warn('Lecture expiry will retry'));
 // This localhost server owns its indexing jobs. Interrupted jobs can be retried after restart.
 prisma.courseMaterial.updateMany({ where: { index_status: { in: ['indexing', 'ocr'] } }, data: { index_status: 'failed', index_error: 'Indexing was interrupted by a server restart. Please retry.' } }).catch(() => console.warn('Could not recover interrupted indexing jobs'));
 const deletionTimer = setInterval(() => processDeletionJobs(io).catch(() => console.warn('Lecture deletion worker unavailable')), 5000);
@@ -77,7 +82,7 @@ let shuttingDown = false;
 function shutdown() {
   if (shuttingDown) return;
   shuttingDown = true;
-  clearInterval(deletionTimer); clearInterval(cleanupTimer);
+  clearInterval(deletionTimer); clearInterval(cleanupTimer); clearInterval(expiryTimer);
   const deadline = setTimeout(() => process.exit(1), 15000);
   deadline.unref();
   io.close(async () => {

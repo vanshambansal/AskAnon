@@ -1,3 +1,4 @@
+import { isSessionExpired, finishSession } from '../utils/sessionExpiry.js';
 import prisma from '../config/prisma.js';
 
 // Code-based access for standalone lectures, without adding an attendance model.
@@ -31,9 +32,10 @@ export async function courseAccess(user, value, write = false) {
 // A valid lecture code remains the existing signed-in joining mechanism.
 export async function sessionAccess(user, value, { write = false, code = false } = {}) {
   const where = code ? { session_code: String(value).trim().toUpperCase() } : { id: positiveId(value) };
-  const session = await prisma.session.findUnique({ where });
+  let session = await prisma.session.findUnique({ where });
   if (!session) fail(404, 'Session not found');
   if (session.deletion_job_id) fail(410, 'This lecture is queued for deletion');
+  if (isSessionExpired(session)) session = (await finishSession(session.id, { expiredOnly: true })).session;
   if (write) assertOwner(user, session.teacher_id);
   else if (code) {
     if (lectureGrants.size >= 10000) lectureGrants.delete(lectureGrants.keys().next().value);
