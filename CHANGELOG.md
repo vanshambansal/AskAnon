@@ -350,3 +350,11 @@ This file is maintained as a persistent, authoritative log of all architectural 
 - Added 45 focused interview answers, a demo script and a self-contained master context. Kept deeper detail in owning chapters rather than repeating tutorials.
 - Linked the handbook from both documentation indexes and marked earlier AI notes as dated references. No application, schema, dependency, environment or deployment settings were changed.
 - Verified local documentation links, source references, fenced blocks, question count, secret patterns and whitespace. App/provider/deployment acceptance checks were not rerun for this documentation-only task.
+
+
+## 2026-11-16 ? Public project README
+
+- Rewrote the root README with the product workflow, features, AI/RAG summary, architecture, stack and repository map.
+- Added a screenshot captured from the public landing page, inspected for layout and absence of signed-in personal data.
+- Added fresh-checkout configuration, empty-database bootstrap, existing-database safety guidance, local run commands and verification instructions.
+- Checked 16 local links, fenced blocks, secret patterns and whitespace. No application/environment changes or database commands were executed.
